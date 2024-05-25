@@ -84,9 +84,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\GitVersion.cs">
-      <Link>Properties\GitVersion.cs</Link>
-    </Compile>
     <Compile Include="AnimatedImage\AnimatedImage.cs" />
     <Compile Include="AnimatedImage\Providers\APngProvider.cs" />
     <Compile Include="AnimatedImage\Providers\DcrawProvider.cs" />

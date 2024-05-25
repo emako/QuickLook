@@ -86,9 +86,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\..\GitVersion.cs">
-      <Link>Properties\GitVersion.cs</Link>
-    </Compile>
     <Compile Include="Converters.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\Resource.Designer.cs">

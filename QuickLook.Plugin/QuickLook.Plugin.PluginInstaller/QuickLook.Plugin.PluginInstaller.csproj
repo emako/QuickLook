@@ -70,9 +70,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\GitVersion.cs">
-      <Link>Properties\GitVersion.cs</Link>
-    </Compile>
     <Compile Include="PluginInfoPanel.xaml.cs">
       <DependentUpon>PluginInfoPanel.xaml</DependentUpon>
     </Compile>

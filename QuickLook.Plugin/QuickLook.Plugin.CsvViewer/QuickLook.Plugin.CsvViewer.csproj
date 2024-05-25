@@ -91,9 +91,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\..\GitVersion.cs">
-      <Link>Properties\GitVersion.cs</Link>
-    </Compile>
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CsvViewerPanel.xaml.cs">

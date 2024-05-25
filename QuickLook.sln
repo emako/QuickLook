@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook", "QuickLook\QuickLook.csproj", "{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickLook", "QuickLook\QuickLook.csproj", "{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D31EE321-C2B0-4984-B749-736F7DE509F1} = {D31EE321-C2B0-4984-B749-736F7DE509F1}
 		{794E4DCF-F715-4836-9D30-ABD296586D23} = {794E4DCF-F715-4836-9D30-ABD296586D23}
@@ -22,11 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.TextViewer", "QuickLook.Plugin\QuickLook.Plugin.TextViewer\QuickLook.Plugin.TextViewer.csproj", "{AE041682-E3A1-44F6-8BB4-916A98D89FBE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.VideoViewer", "QuickLook.Plugin\QuickLook.Plugin.VideoViewer\QuickLook.Plugin.VideoViewer.csproj", "{1B746D92-49A5-4A37-9D75-DCC490393290}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BAE81497-98FA-4A7A-A0FB-2B86C9694B9C}"
-	ProjectSection(SolutionItems) = preProject
-		GitVersion.cs = GitVersion.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.HtmlViewer", "QuickLook.Plugin\QuickLook.Plugin.HtmlViewer\QuickLook.Plugin.HtmlViewer.csproj", "{CE22A1F3-7F2C-4EC8-BFDE-B58D0EB625FC}"
 EndProject
@@ -67,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.CsvViewer"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.MailViewer", "QuickLook.Plugin\QuickLook.Plugin.MailViewer\QuickLook.Plugin.MailViewer.csproj", "{45E94893-3076-4A8E-8969-6955B6340739}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Common", "QuickLook.Common\QuickLook.Common.csproj", "{85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickLook.Common", "QuickLook.Common\QuickLook.Common.csproj", "{85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.PluginInstaller", "QuickLook.Plugin\QuickLook.Plugin.PluginInstaller\QuickLook.Plugin.PluginInstaller.csproj", "{BD58F3FC-7601-47BA-AAA1-D8A9D54A33DA}"
 EndProject
@@ -81,8 +76,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|x86.ActiveCfg = Debug|x86
-		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|x86.Build.0 = Debug|x86
+		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Debug|x86.Build.0 = Debug|Any CPU
 		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8B4A9CE5-67B5-4A94-81CB-3771F688FDEB}.Release|x86.ActiveCfg = Release|x86
@@ -166,6 +161,7 @@ Global
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Debug|Any CPU.Build.0 = Debug|Win32
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Debug|x86.Build.0 = Debug|Win32
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Release|Any CPU.ActiveCfg = Release|Win32
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Release|Any CPU.Build.0 = Release|Win32
 		{2C58F9B2-D8FA-4586-942B-5170CECE5963}.Release|x86.ActiveCfg = Release|Win32
