@@ -9,13 +9,14 @@
         <SignAssembly>false</SignAssembly>
         <UseWPF>true</UseWPF>
         <LangVersion>12.0</LangVersion>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>..\..\Build\Debug\net462\QuickLook.Plugin\QuickLook.Plugin.CameraRawViewer\</OutputPath>
+        <OutputPath>..\..\Build\Debug\QuickLook.Plugin\QuickLook.Plugin.CameraRawViewer\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <PlatformTarget>x86</PlatformTarget>
         <ErrorReport>prompt</ErrorReport>
@@ -25,7 +26,7 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>..\..\Build\Release\net462\QuickLook.Plugin\QuickLook.Plugin.CameraRawViewer\</OutputPath>
+        <OutputPath>..\..\Build\Release\QuickLook.Plugin\QuickLook.Plugin.CameraRawViewer\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <PlatformTarget>x86</PlatformTarget>
         <ErrorReport>prompt</ErrorReport>
@@ -36,7 +37,7 @@
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>..\..\Build\Debug\net462\QuickLook.Plugin\QuickLook.Plugin.PluginInstaller\</OutputPath>
+        <OutputPath>..\..\Build\Debug\QuickLook.Plugin\QuickLook.Plugin.PluginInstaller\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <ErrorReport>prompt</ErrorReport>
@@ -46,7 +47,7 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>..\..\Build\Release\net462\QuickLook.Plugin\QuickLook.Plugin.PluginInstaller\</OutputPath>
+        <OutputPath>..\..\Build\Release\QuickLook.Plugin\QuickLook.Plugin.PluginInstaller\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <ErrorReport>prompt</ErrorReport>

@@ -11,18 +11,19 @@
 	    <UseWindowsForms>true</UseWindowsForms>
 	    <LangVersion>12.0</LangVersion>
 	    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
         <DebugSymbols>true</DebugSymbols>
-        <OutputPath>..\..\Build\Debug\net462\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
+        <OutputPath>..\..\Build\Debug\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <DebugType>full</DebugType>
         <PlatformTarget>x86</PlatformTarget>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-        <OutputPath>..\..\Build\Release\net462\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
+        <OutputPath>..\..\Build\Release\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <Optimize>true</Optimize>
         <DebugType>pdbonly</DebugType>
@@ -31,14 +32,14 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
         <DebugSymbols>true</DebugSymbols>
-        <OutputPath>..\..\Build\Debug\net462\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
+        <OutputPath>..\..\Build\Debug\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <DebugType>full</DebugType>
         <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-        <OutputPath>..\..\Build\Release\net462\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
+        <OutputPath>..\..\Build\Release\QuickLook.Plugin\QuickLook.Plugin.ArchiveViewer\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <Optimize>true</Optimize>
         <DebugType>pdbonly</DebugType>
