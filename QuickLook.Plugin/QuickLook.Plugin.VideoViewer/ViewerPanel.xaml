@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:QuickLook.Plugin.VideoViewer"
-             xmlns:mediakit="clr-namespace:WPFMediaKit.DirectShow.Controls;assembly=WPFMediaKit"
+             xmlns:mediakit="clr-namespace:WPFMediaKit.DirectShow.Controls"
              xmlns:glassLayer="clr-namespace:QuickLook.Controls.GlassLayer;assembly=QuickLook"
              mc:Ignorable="d"
              x:Name="viewerPanel"

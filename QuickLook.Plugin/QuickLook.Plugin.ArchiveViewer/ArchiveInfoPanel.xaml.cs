@@ -1,20 +1,26 @@
 ﻿// Copyright © 2017 Paddy Xu
-// 
+//
 // This file is part of QuickLook program.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using QuickLook.Common.Annotations;
+using QuickLook.Common.ExtensionMethods;
+using QuickLook.Common.Helpers;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,12 +29,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using QuickLook.Common.Annotations;
-using QuickLook.Common.ExtensionMethods;
-using QuickLook.Common.Helpers;
-using SharpCompress.Archives;
-using SharpCompress.Common;
-using SharpCompress.Readers;
 
 namespace QuickLook.Plugin.ArchiveViewer
 {
@@ -79,7 +79,7 @@ namespace QuickLook.Plugin.ArchiveViewer
         {
             new Task(() =>
             {
-                _totalZippedSize = (ulong) new FileInfo(path).Length;
+                _totalZippedSize = (ulong)new FileInfo(path).Length;
 
                 var root = new ArchiveFileEntry(Path.GetFileName(path), true);
                 _fileEntries.Add("", root);
@@ -127,8 +127,8 @@ namespace QuickLook.Plugin.ArchiveViewer
                     archiveCount.Content =
                         $"{_type} archive{t}";
                     archiveSizeC.Content =
-                        $"Compressed size {((long) _totalZippedSize).ToPrettySize(2)}";
-                    archiveSizeU.Content = $"Uncompressed size {((long) sizeU).ToPrettySize(2)}";
+                        $"Compressed size {((long)_totalZippedSize).ToPrettySize(2)}";
+                    archiveSizeU.Content = $"Uncompressed size {((long)sizeU).ToPrettySize(2)}";
                 });
 
                 LoadPercent = 100d;
@@ -140,12 +140,11 @@ namespace QuickLook.Plugin.ArchiveViewer
             using (var stream = File.OpenRead(path))
             {
                 // ReaderFactory is slow... so limit its usage
-                string[] useReader = {".tar.gz", ".tgz", ".tar.bz2", ".tar.lz", ".tar.xz"};
+                string[] useReader = { ".tar.gz", ".tgz", ".tar.bz2", ".tar.lz", ".tar.xz" };
 
                 if (useReader.Any(path.ToLower().EndsWith))
                 {
                     var reader = ReaderFactory.Open(stream, new ChardetReaderOptions());
-
                     _type = reader.ArchiveType.ToString();
 
                     while (reader.MoveToNextEntry())
@@ -202,7 +201,7 @@ namespace QuickLook.Plugin.ArchiveViewer
                 _fileEntries.Add(file, new ArchiveFileEntry(Path.GetFileName(entry.Key), false, parent)
                 {
                     Encrypted = entry.IsEncrypted,
-                    Size = (ulong) entry.Size,
+                    Size = (ulong)entry.Size,
                     ModifiedDate = entry.LastModifiedTime ?? new DateTime()
                 });
             }

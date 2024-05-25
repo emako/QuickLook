@@ -1,17 +1,17 @@
 ﻿// Copyright © 2020 Paddy Xu
-// 
+//
 // This file is part of QuickLook program.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -26,6 +26,7 @@ using ImageMagick;
 using ImageMagick.Formats;
 using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
+using MediaPixelFormats = System.Windows.Media.PixelFormats;
 
 namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
 {
@@ -117,8 +118,8 @@ namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
 
                         mi.AutoOrient();
 
-                        if (mi.Width != (int) fullSize.Width || mi.Height != (int) fullSize.Height)
-                            mi.Resize((int) fullSize.Width, (int) fullSize.Height);
+                        if (mi.Width != (int)fullSize.Width || mi.Height != (int)fullSize.Height)
+                            mi.Resize((int)fullSize.Width, (int)fullSize.Height);
 
                         mi.Density = new Density(DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Horizontal,
                             DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Vertical);
@@ -132,7 +133,7 @@ namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
                 catch (Exception e)
                 {
                     ProcessHelper.WriteLog(e.ToString());
-                    return null;
+                    return null!;
                 }
             });
         }
@@ -156,26 +157,32 @@ namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
                     case Orientation.TopRight:
                         transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
                         break;
+
                     case Orientation.BottomRight:
                         transforms.Children.Add(new RotateTransform(180));
                         break;
+
                     case Orientation.BottomLeft:
                         transforms.Children.Add(new ScaleTransform(1, 1, 0, 0));
                         break;
+
                     case Orientation.LeftTop:
                         transforms.Children.Add(new RotateTransform(90));
                         transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
                         swap = true;
                         break;
+
                     case Orientation.RightTop:
                         transforms.Children.Add(new RotateTransform(90));
                         swap = true;
                         break;
+
                     case Orientation.RightBottom:
                         transforms.Children.Add(new RotateTransform(270));
                         transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
                         swap = true;
                         break;
+
                     case Orientation.LeftBottom:
                         transforms.Children.Add(new RotateTransform(270));
                         swap = true;
@@ -188,5 +195,63 @@ namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
 
             return new TransformedBitmap(image, transforms);
         }
+    }
+}
+
+file static class Extension
+{
+    /// <summary>
+    /// https://github.com/dlemstra/Magick.NET/blob/main/src/Magick.NET.SystemWindowsMedia/IMagickImageExtentions.cs
+    /// </summary>
+    public static BitmapSource ToBitmapSourceWithDensity(this IMagickImage<byte> self, bool useDensity = true)
+    {
+        var image = self;
+
+        var mapping = "RGB";
+        var format = MediaPixelFormats.Rgb24;
+
+        try
+        {
+            if (self.ColorSpace == ColorSpace.CMYK && !image.HasAlpha)
+            {
+                mapping = "CMYK";
+                format = MediaPixelFormats.Cmyk32;
+            }
+            else
+            {
+                if (image.ColorSpace != ColorSpace.sRGB)
+                {
+                    image = self.Clone();
+                    image.ColorSpace = ColorSpace.sRGB;
+                }
+
+                if (image.HasAlpha)
+                {
+                    mapping = "BGRA";
+                    format = MediaPixelFormats.Bgra32;
+                }
+            }
+
+            var step = format.BitsPerPixel / 8;
+            var stride = image.Width * step;
+
+            using var pixels = image.GetPixelsUnsafe();
+            var bytes = pixels.ToByteArray(mapping);
+            var dpi = GetDefaultDensity(image, useDensity ? DensityUnit.PixelsPerInch : DensityUnit.Undefined);
+            return BitmapSource.Create(image.Width, image.Height, dpi.X, dpi.Y, format, null, bytes, stride);
+        }
+        finally
+        {
+            if (!ReferenceEquals(self, image))
+                image.Dispose();
+        }
+    }
+
+    private static Density GetDefaultDensity(IMagickImage image, DensityUnit units)
+    {
+        if (units == DensityUnit.Undefined || (image.Density.X <= 0 || image.Density.Y <= 0))
+            return new Density(96);
+
+        return image.Density.ChangeUnits(units);
     }
 }

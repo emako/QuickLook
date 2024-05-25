@@ -61,7 +61,7 @@ namespace QuickLook.Plugin.ArchiveViewer
             GC.SuppressFinalize(this);
 
             _panel?.Dispose();
-            _panel = null;
+            _panel = null!;
         }
     }
 }

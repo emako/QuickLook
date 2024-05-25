@@ -49,7 +49,8 @@ namespace QuickLook.Plugin.ImageViewer
             ".sr2", ".srf", ".srw", ".svg",
             ".tga", ".tif", ".tiff",
             ".wdp", ".webp", ".wmf",
-            ".x3f", ".xcf"
+            ".x3f", ".xcf",
+            ".dds", ".tga",
         });
 
         private ImagePanel _ip;
