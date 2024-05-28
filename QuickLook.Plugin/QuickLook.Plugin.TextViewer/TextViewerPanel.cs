@@ -1,17 +1,17 @@
 ﻿// Copyright © 2017 Paddy Xu
-// 
+//
 // This file is part of QuickLook program.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -40,6 +40,7 @@ namespace QuickLook.Plugin.TextViewer
         private readonly ContextObject _context;
         private bool _disposed;
         private HighlightingManager highlightingManager = HighlightingManager.Instance;
+        internal string _path;
 
         public TextViewerPanel(string path, ContextObject context)
         {
@@ -124,8 +125,8 @@ namespace QuickLook.Plugin.TextViewer
 
         private class TruncateLongLines : VisualLineElementGenerator
         {
-            const int MAX_LENGTH = 10000;
-            const string ELLIPSIS = "⁞⁞[TRUNCATED]⁞⁞";
+            private const int MAX_LENGTH = 10000;
+            private const string ELLIPSIS = "⁞⁞[TRUNCATED]⁞⁞";
 
             public override int GetFirstInterestedOffset(int startOffset)
             {
@@ -147,6 +148,8 @@ namespace QuickLook.Plugin.TextViewer
 
         private void LoadFileAsync(string path)
         {
+            _path = path;
+
             Task.Run(() =>
             {
                 const int maxLength = 5 * 1024 * 1024;
