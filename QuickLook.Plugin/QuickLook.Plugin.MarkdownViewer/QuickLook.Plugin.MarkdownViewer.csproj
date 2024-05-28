@@ -69,7 +69,11 @@
     </ItemGroup>
     
     <ItemGroup>
-        <None Include="Resources\md2html.html" />
+      <None Remove="Resources\**" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Resource Include="Resources\**" />
     </ItemGroup>
 
 </Project>

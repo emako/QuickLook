@@ -22,6 +22,7 @@ using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
 using QuickLook.Plugin.HtmlViewer;
 using UtfUnknown;
@@ -74,7 +75,10 @@ namespace QuickLook.Plugin.MarkdownViewer
             var md = encoding.GetString(bytes);
             md = WebUtility.HtmlEncode(md);
 
-            var html = Resources.md2html.Replace("{{content}}", md);
+            string theme = OSThemeHelper.AppsUseDarkTheme() ? "Dark" : "Light";
+            string md2html = ResourceHelper.GetString($"pack://application:,,,/QuickLook.Plugin.MarkdownViewer;component/Resources/{theme}/md2html.html", Encoding.UTF8);
+
+            var html = md2html.Replace("{{content}}", md);
 
             return html;
         }
