@@ -27,10 +27,7 @@ namespace QuickLook;
 
 public partial class ViewerWindow : INotifyPropertyChanged
 {
-    private readonly ResourceDictionary _darkDict = new()
-    {
-        Source = new Uri("pack://application:,,,/QuickLook.Common;component/Styles/MainWindowStyles.Dark.xaml")
-    };
+    private readonly ResourceDictionary _darkDict = [];
 
     private bool _canOldPluginResize;
     private bool _pinned;

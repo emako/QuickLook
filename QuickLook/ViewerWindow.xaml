@@ -6,6 +6,8 @@
         xmlns:converters="clr-namespace:QuickLook.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:glassLayer="clr-namespace:QuickLook.Controls.GlassLayer"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:leftContextMenu="clr-namespace:QuickLook.Controls.LeftContextMenu"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Name="mainWindow"
         Title="{Binding ElementName=titleAreaText, Path=Text}"
@@ -26,6 +28,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/QuickLook.Common;component/Styles/MainWindowStyles.xaml" />
+                <ResourceDictionary Source="/QuickLook.Common;component/Styles/MenuItemStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:WindowStateMaximizedToThicknessConverter x:Key="WindowStateMaximizedToThicknessConverter" />
             <converters:WindowStateNormalToThicknessConverter x:Key="WindowStateNormalToThicknessConverter" />
@@ -108,6 +111,22 @@
                             DockPanel.Dock="Right"
                             Style="{StaticResource CaptionButtonStyle}"
                             ToolTip="Share" />
+                    <Button x:Name="buttonOpenIn"
+                            Content="&#xe8a7;"
+                            Cursor="Arrow"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource CaptionButtonStyle}"
+                            ToolTip="Open In">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem x:Name="menuItemBinaryViewer" Header="Binary Viewer" />
+                                <MenuItem x:Name="menuItemMediaInfoViewer" Header="MediaInfo Viwer" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <i:Interaction.Behaviors>
+                            <leftContextMenu:LeftContextMenuBehavior PlacementOffsetX="0" PlacementOffsetY="0" />
+                        </i:Interaction.Behaviors>
+                    </Button>
                     <Button x:Name="buttonOpenWith"
                             Content="&#xE7AC;"
                             DockPanel.Dock="Right"
