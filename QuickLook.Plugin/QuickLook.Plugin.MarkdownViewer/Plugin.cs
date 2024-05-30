@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using QuickLook.Common.Helpers;
+using QuickLook.Common.Plugin;
+using QuickLook.Plugin.HtmlViewer;
 using System;
 using System.IO;
 using System.Linq;
@@ -22,65 +25,61 @@ using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
-using QuickLook.Common.Helpers;
-using QuickLook.Common.Plugin;
-using QuickLook.Plugin.HtmlViewer;
 using UtfUnknown;
 
-namespace QuickLook.Plugin.MarkdownViewer
+namespace QuickLook.Plugin.MarkdownViewer;
+
+public class Plugin : IViewer
 {
-    public class Plugin : IViewer
+    private WebpagePanel _panel;
+
+    public int Priority => 0;
+
+    public void Init()
     {
-        private WebpagePanel _panel;
+    }
 
-        public int Priority => 0;
+    public bool CanHandle(string path)
+    {
+        return !Directory.Exists(path) && new[] { ".md", ".rmd", ".markdown" }.Any(path.ToLower().EndsWith);
+    }
 
-        public void Init()
-        {
-        }
+    public void Prepare(string path, ContextObject context)
+    {
+        context.PreferredSize = new Size(1000, 600);
+    }
 
-        public bool CanHandle(string path)
-        {
-            return !Directory.Exists(path) && new[] { ".md", ".rmd", ".markdown" }.Any(path.ToLower().EndsWith);
-        }
+    public void View(string path, ContextObject context)
+    {
+        _panel = new WebpagePanel();
+        context.ViewerContent = _panel;
+        context.Title = Path.GetFileName(path);
 
-        public void Prepare(string path, ContextObject context)
-        {
-            context.PreferredSize = new Size(1000, 600);
-        }
+        _panel.NavigateToHtml(GenerateMarkdownHtml(path));
+        _panel.Dispatcher.Invoke(() => { context.IsBusy = false; }, DispatcherPriority.Loaded);
+    }
 
-        public void View(string path, ContextObject context)
-        {
-            _panel = new WebpagePanel();
-            context.ViewerContent = _panel;
-            context.Title = Path.GetFileName(path);
+    public void Cleanup()
+    {
+        GC.SuppressFinalize(this);
 
-            _panel.NavigateToHtml(GenerateMarkdownHtml(path));
-            _panel.Dispatcher.Invoke(() => { context.IsBusy = false; }, DispatcherPriority.Loaded);
-        }
+        _panel?.Dispose();
+        _panel = null!;
+    }
 
-        public void Cleanup()
-        {
-            GC.SuppressFinalize(this);
+    private string GenerateMarkdownHtml(string path)
+    {
+        var bytes = File.ReadAllBytes(path);
+        var encoding = CharsetDetector.DetectFromBytes(bytes).Detected?.Encoding ?? Encoding.Default;
 
-            _panel?.Dispose();
-            _panel = null!;
-        }
+        var md = encoding.GetString(bytes);
+        md = WebUtility.HtmlEncode(md);
 
-        private string GenerateMarkdownHtml(string path)
-        {
-            var bytes = File.ReadAllBytes(path);
-            var encoding = CharsetDetector.DetectFromBytes(bytes).Detected?.Encoding ?? Encoding.Default;
+        string theme = OSThemeHelper.AppsUseDarkTheme() ? "Dark" : "Light";
+        string md2html = ResourceHelper.GetString($"pack://application:,,,/QuickLook.Plugin.MarkdownViewer;component/Resources/{theme}/md2html.html", Encoding.UTF8);
 
-            var md = encoding.GetString(bytes);
-            md = WebUtility.HtmlEncode(md);
+        var html = md2html.Replace("{{content}}", md);
 
-            string theme = OSThemeHelper.AppsUseDarkTheme() ? "Dark" : "Light";
-            string md2html = ResourceHelper.GetString($"pack://application:,,,/QuickLook.Plugin.MarkdownViewer;component/Resources/{theme}/md2html.html", Encoding.UTF8);
-
-            var html = md2html.Replace("{{content}}", md);
-
-            return html;
-        }
+        return html;
     }
 }

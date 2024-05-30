@@ -27,16 +27,19 @@
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     </Style>
 
-    <Style x:Key="CaptionTextButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonBaseStyle}">
+    <Style x:Key="CaptionTextButtonStyle"
+           BasedOn="{StaticResource CaptionButtonBaseStyle}"
+           TargetType="Button">
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="6,2,6,2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}">
+                    <Border Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>
@@ -53,7 +56,9 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="CaptionButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonBaseStyle}">
+    <Style x:Key="CaptionButtonStyle"
+           BasedOn="{StaticResource CaptionButtonBaseStyle}"
+           TargetType="Button">
         <Setter Property="Width" Value="45" />
         <Setter Property="Height" Value="32" />
         <Setter Property="FontSize" Value="13" />
@@ -62,8 +67,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}" BorderThickness="0"
-                            Padding="{TemplateBinding Padding}">
+                    <Border Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
@@ -79,7 +85,9 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="CaptionCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+    <Style x:Key="CaptionCloseButtonStyle"
+           BasedOn="{StaticResource CaptionButtonStyle}"
+           TargetType="Button">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource CaptionCloseButtonHoverForeground}" />

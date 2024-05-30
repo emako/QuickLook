@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace WPFMediaKit
+namespace WPFMediaKit;
+
+public class WPFMediaKitException : Exception
 {
-    public class WPFMediaKitException : Exception
+    public WPFMediaKitException()
+        : base()
     {
-        public WPFMediaKitException()
-            : base()
-        {
-        }
+    }
 
-        public WPFMediaKitException(string message)
-            : base(message)
-        {
-        }
+    public WPFMediaKitException(string message)
+        : base(message)
+    {
+    }
 
-        public WPFMediaKitException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public WPFMediaKitException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected WPFMediaKitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected WPFMediaKitException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

@@ -1,17 +1,17 @@
 ﻿// Copyright © 2017 Paddy Xu
-// 
+//
 // This file is part of QuickLook program.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -25,99 +25,99 @@ using static QuickLook.Common.NativeMethods.User32;
 using static QuickLook.Common.NativeMethods.MsCms;
 using System.Text;
 
-namespace QuickLook.Common.Helpers
+namespace QuickLook.Common.Helpers;
+
+public static class DisplayDeviceHelper
 {
-    public static class DisplayDeviceHelper
+    public const int DefaultDpi = 96;
+
+    public static ScaleFactor GetScaleFactorFromWindow(Window window)
     {
-        public const int DefaultDpi = 96;
+        return GetScaleFactorFromWindow(new WindowInteropHelper(window).EnsureHandle());
+    }
 
-        public static ScaleFactor GetScaleFactorFromWindow(Window window)
+    public static ScaleFactor GetCurrentScaleFactor()
+    {
+        return GetScaleFactorFromWindow(User32.GetForegroundWindow());
+    }
+
+    public static ScaleFactor GetScaleFactorFromWindow(IntPtr hwnd)
+    {
+        var dpiX = DefaultDpi;
+        var dpiY = DefaultDpi;
+
+        try
         {
-            return GetScaleFactorFromWindow(new WindowInteropHelper(window).EnsureHandle());
-        }
-
-        public static ScaleFactor GetCurrentScaleFactor()
-        {
-            return GetScaleFactorFromWindow(User32.GetForegroundWindow());
-        }
-
-        public static ScaleFactor GetScaleFactorFromWindow(IntPtr hwnd)
-        {
-            var dpiX = DefaultDpi;
-            var dpiY = DefaultDpi;
-
-            try
+            if (Environment.OSVersion.Version > new Version(6, 2)) // Windows 8.1 = 6.3.9200
             {
-                if (Environment.OSVersion.Version > new Version(6, 2)) // Windows 8.1 = 6.3.9200
-                {
-                    var hMonitor = MonitorFromWindow(hwnd, MonitorDefaults.TOPRIMARY);
-                    GetDpiForMonitor(hMonitor, MonitorDpiType.EFFECTIVE_DPI, out dpiX, out dpiY);
-                }
-                else
-                {
-                    var g = Graphics.FromHwnd(IntPtr.Zero);
-                    var desktop = g.GetHdc();
-
-                    dpiX = GetDeviceCaps(desktop, DeviceCap.LOGPIXELSX);
-                    dpiY = GetDeviceCaps(desktop, DeviceCap.LOGPIXELSY);
-                }
+                var hMonitor = MonitorFromWindow(hwnd, MonitorDefaults.TOPRIMARY);
+                GetDpiForMonitor(hMonitor, MonitorDpiType.EFFECTIVE_DPI, out dpiX, out dpiY);
             }
-            catch (Exception e)
+            else
             {
-                ProcessHelper.WriteLog(e.ToString());
+                var g = Graphics.FromHwnd(IntPtr.Zero);
+                var desktop = g.GetHdc();
+
+                dpiX = GetDeviceCaps(desktop, DeviceCap.LOGPIXELSX);
+                dpiY = GetDeviceCaps(desktop, DeviceCap.LOGPIXELSY);
             }
-
-            return new ScaleFactor {Horizontal = (float) dpiX / DefaultDpi, Vertical = (float) dpiY / DefaultDpi};
         }
-        public static string GetMonitorColorProfileFromWindow(Window window)
+        catch (Exception e)
         {
-            var hMonitor = MonitorFromWindow(new WindowInteropHelper(window).EnsureHandle(), MonitorDefaults.TONEAREST);
-            return GetMonitorColorProfile(hMonitor);
+            ProcessHelper.WriteLog(e.ToString());
         }
 
-        public static string GetMonitorColorProfile(IntPtr hMonitor)
-        {
-            var profileDir = new StringBuilder(255);
-            var pDirSize = (uint)profileDir.Capacity;
-            GetColorDirectory(null, profileDir, ref pDirSize);
+        return new ScaleFactor { Horizontal = (float)dpiX / DefaultDpi, Vertical = (float)dpiY / DefaultDpi };
+    }
 
-            var mInfo = new MONITORINFOEX();
-            mInfo.cbSize = (uint)Marshal.SizeOf(mInfo);
-            if (!GetMonitorInfo(hMonitor, ref mInfo))
-                return null;
+    public static string GetMonitorColorProfileFromWindow(Window window)
+    {
+        var hMonitor = MonitorFromWindow(new WindowInteropHelper(window).EnsureHandle(), MonitorDefaults.TONEAREST);
+        return GetMonitorColorProfile(hMonitor);
+    }
 
-            var dd = new DISPLAYDEVICE();
-            dd.cb = (uint)Marshal.SizeOf(dd);
-            if (!EnumDisplayDevices(mInfo.szDevice, 0, ref dd, 0))
-                return null;
+    public static string GetMonitorColorProfile(IntPtr hMonitor)
+    {
+        var profileDir = new StringBuilder(255);
+        var pDirSize = (uint)profileDir.Capacity;
+        GetColorDirectory(null, profileDir, ref pDirSize);
 
-            WcsGetUsePerUserProfiles(dd.DeviceKey, CLASS_MONITOR, out bool usePerUserProfiles);
-            var scope = usePerUserProfiles ? WcsProfileManagementScope.CURRENT_USER : WcsProfileManagementScope.SYSTEM_WIDE;
+        var mInfo = new MONITORINFOEX();
+        mInfo.cbSize = (uint)Marshal.SizeOf(mInfo);
+        if (!GetMonitorInfo(hMonitor, ref mInfo))
+            return null;
 
-            if (!WcsGetDefaultColorProfileSize(scope, dd.DeviceKey, ColorProfileType.ICC, ColorProfileSubtype.NONE, 0, out uint size))
-                return null;
+        var dd = new DISPLAYDEVICE();
+        dd.cb = (uint)Marshal.SizeOf(dd);
+        if (!EnumDisplayDevices(mInfo.szDevice, 0, ref dd, 0))
+            return null;
 
-            var profileName = new StringBuilder((int)size);
-            if (!WcsGetDefaultColorProfile(scope, dd.DeviceKey, ColorProfileType.ICC, ColorProfileSubtype.NONE, 0, size, profileName))
-                return null;
-            return System.IO.Path.Combine(profileDir.ToString(), profileName.ToString());
-        }
+        WcsGetUsePerUserProfiles(dd.DeviceKey, CLASS_MONITOR, out bool usePerUserProfiles);
+        var scope = usePerUserProfiles ? WcsProfileManagementScope.CURRENT_USER : WcsProfileManagementScope.SYSTEM_WIDE;
 
-        [DllImport("shcore.dll")]
-        private static extern uint
-            GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out int dpiX, out int dpiY);
+        if (!WcsGetDefaultColorProfileSize(scope, dd.DeviceKey, ColorProfileType.ICC, ColorProfileSubtype.NONE, 0, out uint size))
+            return null;
 
-        private enum MonitorDpiType
-        {
-            EFFECTIVE_DPI = 0,
-            ANGULAR_DPI = 1,
-            RAW_DPI = 2
-        }
+        var profileName = new StringBuilder((int)size);
+        if (!WcsGetDefaultColorProfile(scope, dd.DeviceKey, ColorProfileType.ICC, ColorProfileSubtype.NONE, 0, size, profileName))
+            return null;
+        return System.IO.Path.Combine(profileDir.ToString(), profileName.ToString());
+    }
 
-        public struct ScaleFactor
-        {
-            public float Horizontal;
-            public float Vertical;
-        }
+    [DllImport("shcore.dll")]
+    private static extern uint
+        GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out int dpiX, out int dpiY);
+
+    private enum MonitorDpiType
+    {
+        EFFECTIVE_DPI = 0,
+        ANGULAR_DPI = 1,
+        RAW_DPI = 2
+    }
+
+    public struct ScaleFactor
+    {
+        public float Horizontal;
+        public float Vertical;
     }
 }

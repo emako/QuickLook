@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using ImageMagick;
+using ImageMagick.Formats;
+using QuickLook.Common.Helpers;
+using QuickLook.Common.Plugin;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,179 +26,174 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using ImageMagick;
-using ImageMagick.Formats;
-using QuickLook.Common.Helpers;
-using QuickLook.Common.Plugin;
 using MediaPixelFormats = System.Windows.Media.PixelFormats;
 
-namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers
+namespace QuickLook.Plugin.ImageViewer.AnimatedImage.Providers;
+
+internal class ImageMagickProvider : AnimationProvider
 {
-    internal class ImageMagickProvider : AnimationProvider
+    public ImageMagickProvider(Uri path, MetaProvider meta, ContextObject contextObject) : base(path, meta, contextObject)
     {
-        public ImageMagickProvider(Uri path, MetaProvider meta, ContextObject contextObject) : base(path, meta, contextObject)
-        {
-            Animator = new Int32AnimationUsingKeyFrames();
-            Animator.KeyFrames.Add(new DiscreteInt32KeyFrame(0,
-                KeyTime.FromTimeSpan(TimeSpan.Zero)));
-        }
+        Animator = new Int32AnimationUsingKeyFrames();
+        Animator.KeyFrames.Add(new DiscreteInt32KeyFrame(0,
+            KeyTime.FromTimeSpan(TimeSpan.Zero)));
+    }
 
-        public override Task<BitmapSource> GetThumbnail(Size renderSize)
-        {
-            var fullSize = Meta.GetSize();
-            var orientation = Meta.GetOrientation();
+    public override Task<BitmapSource> GetThumbnail(Size renderSize)
+    {
+        var fullSize = Meta.GetSize();
+        var orientation = Meta.GetOrientation();
 
-            return new Task<BitmapSource>(() =>
+        return new Task<BitmapSource>(() =>
+        {
+            try
             {
-                try
+                using (var buffer = new MemoryStream(Meta.GetThumbnail()))
                 {
-                    using (var buffer = new MemoryStream(Meta.GetThumbnail()))
-                    {
-                        if (buffer.Length == 0)
-                            return null;
+                    if (buffer.Length == 0)
+                        return null;
 
-                        var img = new BitmapImage();
-                        img.BeginInit();
-                        img.StreamSource = buffer;
-                        img.CacheOption = BitmapCacheOption.OnLoad;
-                        img.EndInit();
+                    var img = new BitmapImage();
+                    img.BeginInit();
+                    img.StreamSource = buffer;
+                    img.CacheOption = BitmapCacheOption.OnLoad;
+                    img.EndInit();
 
-                        var transformed = RotateAndScaleThumbnail(img, orientation, fullSize);
+                    var transformed = RotateAndScaleThumbnail(img, orientation, fullSize);
 
-                        Helper.DpiHack(transformed);
-                        transformed.Freeze();
-                        return transformed;
-                    }
+                    Helper.DpiHack(transformed);
+                    transformed.Freeze();
+                    return transformed;
                 }
-                catch (Exception e)
-                {
-                    ProcessHelper.WriteLog(e.ToString());
-                    return null;
-                }
-            });
-        }
-
-        public override Task<BitmapSource> GetRenderedFrame(int index)
-        {
-            var fullSize = Meta.GetSize();
-
-            return new Task<BitmapSource>(() =>
+            }
+            catch (Exception e)
             {
-                var settings = new MagickReadSettings
-                {
-                    BackgroundColor = MagickColors.None,
-                    Defines = new DngReadDefines
-                    {
-                        OutputColor = DngOutputColor.SRGB,
-                        UseCameraWhitebalance = true,
-                        DisableAutoBrightness = false
-                    }
-                };
+                ProcessHelper.WriteLog(e.ToString());
+                return null;
+            }
+        });
+    }
 
-                try
-                {
-                    using (MagickImageCollection layers = new MagickImageCollection(Path.LocalPath, settings))
-                    {
-                        IMagickImage<byte> mi;
-                        // Only flatten multi-layer gimp xcf files.
-                        if (Path.LocalPath.ToLower().EndsWith(".xcf") && layers.Count > 1)
-                        {
-                            // Flatten crops layers to canvas
-                            mi = layers.Flatten(MagickColor.FromRgba(0, 0, 0, 0));
-                        }
-                        else
-                        {
-                            mi = layers[0];
-                        }
-                        if (SettingHelper.Get("UseColorProfile", false, "QuickLook.Plugin.ImageViewer"))
-                        {
-                            if (mi.ColorSpace == ColorSpace.RGB || mi.ColorSpace == ColorSpace.sRGB || mi.ColorSpace == ColorSpace.scRGB)
-                            {
-                                mi.SetProfile(ColorProfile.SRGB);
-                                if (ContextObject.ColorProfileName != null)
-                                    mi.SetProfile(new ColorProfile(ContextObject.ColorProfileName)); // map to monitor color
-                            }
-                        }
+    public override Task<BitmapSource> GetRenderedFrame(int index)
+    {
+        var fullSize = Meta.GetSize();
 
-                        mi.AutoOrient();
-
-                        if (mi.Width != (int)fullSize.Width || mi.Height != (int)fullSize.Height)
-                            mi.Resize((int)fullSize.Width, (int)fullSize.Height);
-
-                        mi.Density = new Density(DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Horizontal,
-                            DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Vertical);
-
-                        var img = mi.ToBitmapSourceWithDensity();
-
-                        img.Freeze();
-                        return img;
-                    }
-                }
-                catch (Exception e)
-                {
-                    ProcessHelper.WriteLog(e.ToString());
-                    return null!;
-                }
-            });
-        }
-
-        public override void Dispose()
+        return new Task<BitmapSource>(() =>
         {
-        }
-
-        private static TransformedBitmap RotateAndScaleThumbnail(BitmapImage image, Orientation orientation,
-            Size fullSize)
-        {
-            var swap = false;
-
-            var transforms = new TransformGroup();
-
-            // some RAWs, like from RX100, have thumbnails already rotated.
-            if (fullSize.Height >= fullSize.Width && image.PixelHeight <= image.PixelWidth ||
-                fullSize.Height < fullSize.Width && image.PixelHeight > image.PixelWidth)
-                switch (orientation)
+            var settings = new MagickReadSettings
+            {
+                BackgroundColor = MagickColors.None,
+                Defines = new DngReadDefines
                 {
-                    case Orientation.TopRight:
-                        transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
-                        break;
-
-                    case Orientation.BottomRight:
-                        transforms.Children.Add(new RotateTransform(180));
-                        break;
-
-                    case Orientation.BottomLeft:
-                        transforms.Children.Add(new ScaleTransform(1, 1, 0, 0));
-                        break;
-
-                    case Orientation.LeftTop:
-                        transforms.Children.Add(new RotateTransform(90));
-                        transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
-                        swap = true;
-                        break;
-
-                    case Orientation.RightTop:
-                        transforms.Children.Add(new RotateTransform(90));
-                        swap = true;
-                        break;
-
-                    case Orientation.RightBottom:
-                        transforms.Children.Add(new RotateTransform(270));
-                        transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
-                        swap = true;
-                        break;
-
-                    case Orientation.LeftBottom:
-                        transforms.Children.Add(new RotateTransform(270));
-                        swap = true;
-                        break;
+                    OutputColor = DngOutputColor.SRGB,
+                    UseCameraWhitebalance = true,
+                    DisableAutoBrightness = false
                 }
+            };
 
-            transforms.Children.Add(swap
-                ? new ScaleTransform(fullSize.Width / image.PixelHeight, fullSize.Height / image.PixelWidth)
-                : new ScaleTransform(fullSize.Width / image.PixelWidth, fullSize.Height / image.PixelHeight));
+            try
+            {
+                using (MagickImageCollection layers = new MagickImageCollection(Path.LocalPath, settings))
+                {
+                    IMagickImage<byte> mi;
+                    // Only flatten multi-layer gimp xcf files.
+                    if (Path.LocalPath.ToLower().EndsWith(".xcf") && layers.Count > 1)
+                    {
+                        // Flatten crops layers to canvas
+                        mi = layers.Flatten(MagickColor.FromRgba(0, 0, 0, 0));
+                    }
+                    else
+                    {
+                        mi = layers[0];
+                    }
+                    if (SettingHelper.Get("UseColorProfile", false, "QuickLook.Plugin.ImageViewer"))
+                    {
+                        if (mi.ColorSpace == ColorSpace.RGB || mi.ColorSpace == ColorSpace.sRGB || mi.ColorSpace == ColorSpace.scRGB)
+                        {
+                            mi.SetProfile(ColorProfile.SRGB);
+                            if (ContextObject.ColorProfileName != null)
+                                mi.SetProfile(new ColorProfile(ContextObject.ColorProfileName)); // map to monitor color
+                        }
+                    }
 
-            return new TransformedBitmap(image, transforms);
-        }
+                    mi.AutoOrient();
+
+                    if (mi.Width != (int)fullSize.Width || mi.Height != (int)fullSize.Height)
+                        mi.Resize((int)fullSize.Width, (int)fullSize.Height);
+
+                    mi.Density = new Density(DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Horizontal,
+                        DisplayDeviceHelper.DefaultDpi * DisplayDeviceHelper.GetCurrentScaleFactor().Vertical);
+
+                    var img = mi.ToBitmapSourceWithDensity();
+
+                    img.Freeze();
+                    return img;
+                }
+            }
+            catch (Exception e)
+            {
+                ProcessHelper.WriteLog(e.ToString());
+                return null!;
+            }
+        });
+    }
+
+    public override void Dispose()
+    {
+    }
+
+    private static TransformedBitmap RotateAndScaleThumbnail(BitmapImage image, Orientation orientation,
+        Size fullSize)
+    {
+        var swap = false;
+
+        var transforms = new TransformGroup();
+
+        // some RAWs, like from RX100, have thumbnails already rotated.
+        if (fullSize.Height >= fullSize.Width && image.PixelHeight <= image.PixelWidth ||
+            fullSize.Height < fullSize.Width && image.PixelHeight > image.PixelWidth)
+            switch (orientation)
+            {
+                case Orientation.TopRight:
+                    transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
+                    break;
+
+                case Orientation.BottomRight:
+                    transforms.Children.Add(new RotateTransform(180));
+                    break;
+
+                case Orientation.BottomLeft:
+                    transforms.Children.Add(new ScaleTransform(1, 1, 0, 0));
+                    break;
+
+                case Orientation.LeftTop:
+                    transforms.Children.Add(new RotateTransform(90));
+                    transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
+                    swap = true;
+                    break;
+
+                case Orientation.RightTop:
+                    transforms.Children.Add(new RotateTransform(90));
+                    swap = true;
+                    break;
+
+                case Orientation.RightBottom:
+                    transforms.Children.Add(new RotateTransform(270));
+                    transforms.Children.Add(new ScaleTransform(-1, 1, 0, 0));
+                    swap = true;
+                    break;
+
+                case Orientation.LeftBottom:
+                    transforms.Children.Add(new RotateTransform(270));
+                    swap = true;
+                    break;
+            }
+
+        transforms.Children.Add(swap
+            ? new ScaleTransform(fullSize.Width / image.PixelHeight, fullSize.Height / image.PixelWidth)
+            : new ScaleTransform(fullSize.Width / image.PixelWidth, fullSize.Height / image.PixelHeight));
+
+        return new TransformedBitmap(image, transforms);
     }
 }
 

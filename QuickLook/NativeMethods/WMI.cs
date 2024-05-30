@@ -19,29 +19,26 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
 
-namespace QuickLook.NativeMethods
+namespace QuickLook.NativeMethods;
+
+internal class WMI
 {
-    internal class WMI
+    public static List<string> GetGPUNames()
     {
-        public static List<string> GetGPUNames()
+        try
         {
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher(@"root\CIMV2", @"SELECT * FROM Win32_VideoController"))
-                {
-                    var names = new List<string>();
+            using var searcher = new ManagementObjectSearcher(@"root\CIMV2", @"SELECT * FROM Win32_VideoController");
+            var names = new List<string>();
 
-                    foreach (var obj in searcher.Get())
-                        names.Add(obj["Name"] as string);
+            foreach (var obj in searcher.Get())
+                names.Add(obj["Name"] as string);
 
-                    return names;
-                }
-            }
-            catch (ManagementException e)
-            {
-                Debug.WriteLine(e.Message);
-                return new List<string>();
-            }
+            return names;
+        }
+        catch (ManagementException e)
+        {
+            Debug.WriteLine(e.Message);
+            return [];
         }
     }
 }

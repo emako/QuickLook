@@ -7,37 +7,37 @@
                 <ControlTemplate TargetType="{x:Type Controls:MediaDetectorElement}">
                     <ControlTemplate.Resources>
                         <DataTemplate x:Key="VideoFrameDataTemplate">
-                            <Grid Width="180"
-                                  Height="100">
-                                <Border CornerRadius="2"
+                            <Grid Width="180" Height="100">
+                                <Border Width="150"
+                                        Height="80"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="#33000000"
                                         BorderBrush="#AA000000"
                                         BorderThickness="1,1,0,0"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        Width="150"
-                                        Height="80"
-                                        Background="#33000000">
+                                        CornerRadius="2">
                                     <Grid>
-                                        <Border CornerRadius="2"
+                                        <Border HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
                                                 BorderBrush="#AA888888"
                                                 BorderThickness="0,0,1,1"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center">
+                                                CornerRadius="2">
                                             <Image Source="{Binding Path=Snapshot}" />
                                         </Border>
-                                        <TextBlock Text="{Binding Path=MediaTime}"
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="11"
                                                    Foreground="Black"
+                                                   Text="{Binding Path=MediaTime}" />
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
                                                    FontSize="11"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Bottom" />
-                                        <TextBlock Text="{Binding Path=MediaTime}"
                                                    Foreground="White"
-                                                   FontSize="11"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Bottom">
+                                                   Text="{Binding Path=MediaTime}">
                                             <TextBlock.RenderTransform>
                                                 <TranslateTransform Y="-1" />
-                                            </TextBlock.RenderTransform></TextBlock>
+                                            </TextBlock.RenderTransform>
+                                        </TextBlock>
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -47,10 +47,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
-                            <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-                                          VerticalScrollBarVisibility="Hidden">
-                                <ItemsControl x:Name="PART_VideoFrameItems"
-                                              ItemTemplate="{StaticResource VideoFrameDataTemplate}">
+                            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                <ItemsControl x:Name="PART_VideoFrameItems" ItemTemplate="{StaticResource VideoFrameDataTemplate}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal" />

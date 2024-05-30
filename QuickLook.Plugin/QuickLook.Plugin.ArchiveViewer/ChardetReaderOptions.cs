@@ -15,34 +15,33 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Text;
 using SharpCompress.Common;
 using SharpCompress.Readers;
+using System;
+using System.Text;
 using UtfUnknown;
 
-namespace QuickLook.Plugin.ArchiveViewer
+namespace QuickLook.Plugin.ArchiveViewer;
+
+internal class ChardetReaderOptions : ReaderOptions
 {
-    internal class ChardetReaderOptions : ReaderOptions
+    public ChardetReaderOptions()
     {
-        public ChardetReaderOptions()
+        ArchiveEncoding = new ArchiveEncoding
         {
-            ArchiveEncoding = new ArchiveEncoding
-            {
-                CustomDecoder = Chardet
-            };
-            LookForHeader = true;
-        }
+            CustomDecoder = Chardet
+        };
+        LookForHeader = true;
+    }
 
-        public string Chardet(byte[] bytes, int index, int count)
-        {
-            var buffer = new byte[count];
+    public string Chardet(byte[] bytes, int index, int count)
+    {
+        var buffer = new byte[count];
 
-            Array.Copy(bytes, index, buffer, 0, count);
+        Array.Copy(bytes, index, buffer, 0, count);
 
-            var encoding = CharsetDetector.DetectFromBytes(buffer).Detected?.Encoding ?? Encoding.Default;
+        var encoding = CharsetDetector.DetectFromBytes(buffer).Detected?.Encoding ?? Encoding.Default;
 
-            return encoding.GetString(buffer);
-        }
+        return encoding.GetString(buffer);
     }
 }

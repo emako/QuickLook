@@ -1,104 +1,103 @@
-﻿using System;
+﻿using DirectShowLib;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using DirectShowLib;
 
-namespace WPFMediaKit.DirectShow.MediaPlayers
+namespace WPFMediaKit.DirectShow.MediaPlayers;
+
+public class PropertyPageHelper : IDisposable
 {
-    public class PropertyPageHelper : IDisposable
+    private const string NO_PROPERTY_PAGE_FOUND = "No property page found.";
+
+    [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    private static extern int OleCreatePropertyFrame(IntPtr hwndOwner,
+                                                     int x,
+                                                     int y,
+                                                     string lpszCaption,
+                                                     int cObjects,
+                                                     [In, MarshalAs(UnmanagedType.Interface)] ref object ppUnk,
+                                                     int cPages,
+                                                     IntPtr pPageClsId,
+                                                     int lcid,
+                                                     int dwReserved,
+                                                     IntPtr pvReserved);
+
+    private ISpecifyPropertyPages m_specifyPropertyPages;
+
+    public PropertyPageHelper(IBaseFilter filter)
     {
-        private const string NO_PROPERTY_PAGE_FOUND = "No property page found.";
+        m_specifyPropertyPages = filter as ISpecifyPropertyPages;
+    }
 
-        [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int OleCreatePropertyFrame(IntPtr hwndOwner,
-                                                         int x,
-                                                         int y,
-                                                         string lpszCaption,
-                                                         int cObjects,
-                                                         [In, MarshalAs(UnmanagedType.Interface)] ref object ppUnk,
-                                                         int cPages,
-                                                         IntPtr pPageClsId,
-                                                         int lcid,
-                                                         int dwReserved,
-                                                         IntPtr pvReserved);
-
-        private ISpecifyPropertyPages m_specifyPropertyPages;
-
-        public PropertyPageHelper(IBaseFilter filter)
+    public PropertyPageHelper(DsDevice dev)
+    {
+        try
         {
-            m_specifyPropertyPages = filter as ISpecifyPropertyPages;
-        }
-
-        public PropertyPageHelper(DsDevice dev)
-        {
-            try
+            object source;
+            var id = typeof(IBaseFilter).GUID;
+            dev.Mon.BindToObject(null, null, ref id, out source);
+            if (source != null)
             {
-                object source;
-                var id = typeof(IBaseFilter).GUID;
-                dev.Mon.BindToObject(null, null, ref id, out source);
-                if (source != null)
-                {
-                    var filter = (IBaseFilter)source;
-                    m_specifyPropertyPages = filter as ISpecifyPropertyPages;
-                }
-            }
-            catch
-            {
-                MessageBox.Show(NO_PROPERTY_PAGE_FOUND);
+                var filter = (IBaseFilter)source;
+                m_specifyPropertyPages = filter as ISpecifyPropertyPages;
             }
         }
-
-        #region IDisposable Members
-
-        public void Dispose()
+        catch
         {
-            m_specifyPropertyPages = null;
+            MessageBox.Show(NO_PROPERTY_PAGE_FOUND);
         }
+    }
 
-        #endregion
+    #region IDisposable Members
 
-        public void Show(IntPtr hWnd)
+    public void Dispose()
+    {
+        m_specifyPropertyPages = null;
+    }
+
+    #endregion IDisposable Members
+
+    public void Show(IntPtr hWnd)
+    {
+        var cauuid = new DsCAUUID();
+        try
         {
-            var cauuid = new DsCAUUID();
-            try
+            int hr = m_specifyPropertyPages.GetPages(out cauuid);
+            if (hr != 0)
             {
-                int hr = m_specifyPropertyPages.GetPages(out cauuid);
-                if (hr != 0)
-                {
-                    Marshal.ThrowExceptionForHR(hr);
-                }
+                Marshal.ThrowExceptionForHR(hr);
+            }
 
-                object objRef = m_specifyPropertyPages;
-                hr = OleCreatePropertyFrame(hWnd,
-                                            30, 
-                                            30, 
-                                            null, 
-                                            1,
-                                            ref objRef, 
-                                            cauuid.cElems, 
-                                            cauuid.pElems, 
-                                            0, 
-                                            0, 
-                                            IntPtr.Zero);
+            object objRef = m_specifyPropertyPages;
+            hr = OleCreatePropertyFrame(hWnd,
+                                        30,
+                                        30,
+                                        null,
+                                        1,
+                                        ref objRef,
+                                        cauuid.cElems,
+                                        cauuid.pElems,
+                                        0,
+                                        0,
+                                        IntPtr.Zero);
 
-                DsError.ThrowExceptionForHR(hr);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(NO_PROPERTY_PAGE_FOUND);
-            }
-            finally
-            {
-                if (cauuid.pElems != IntPtr.Zero)
-                {
-                    Marshal.FreeCoTaskMem(cauuid.pElems);
-                }
-            }
+            DsError.ThrowExceptionForHR(hr);
         }
-
-        public void Show(Control owner)
+        catch (Exception)
         {
-            Show(owner.Handle);
+            MessageBox.Show(NO_PROPERTY_PAGE_FOUND);
         }
+        finally
+        {
+            if (cauuid.pElems != IntPtr.Zero)
+            {
+                Marshal.FreeCoTaskMem(cauuid.pElems);
+            }
+        }
+    }
+
+    public void Show(Control owner)
+    {
+        Show(owner.Handle);
     }
 }
