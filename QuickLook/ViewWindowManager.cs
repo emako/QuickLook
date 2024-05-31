@@ -140,6 +140,30 @@ internal class ViewWindowManager : IDisposable
         BeginShowNewWindow(path, matchedPlugin);
     }
 
+    public void InvokePluginPreview(string plugin, string path = null)
+    {
+        if (string.IsNullOrEmpty(path))
+            path = _invokedPath;
+
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        if (!Directory.Exists(path) && !File.Exists(path))
+            return;
+
+        RunFocusMonitor();
+
+        var matchedPlugin = PluginManager.GetInstance().LoadedPlugins.Find(p =>
+        {
+            return p.GetType().Assembly.GetName().Name == plugin;
+        });
+
+        if (matchedPlugin != null)
+        {
+            BeginShowNewWindow(path, matchedPlugin);
+        }
+    }
+
     private void BeginShowNewWindow(string path, IViewer matchedPlugin)
     {
         _viewerWindow.UnloadPlugin();
@@ -182,6 +206,6 @@ internal class ViewWindowManager : IDisposable
 
     internal static ViewWindowManager GetInstance()
     {
-        return _instance ?? (_instance = new ViewWindowManager());
+        return _instance ??= new ViewWindowManager();
     }
 }

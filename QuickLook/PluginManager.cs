@@ -40,11 +40,11 @@ internal class PluginManager
 
     internal IViewer DefaultPlugin { get; } = new Plugin.InfoPanel.Plugin();
 
-    internal List<IViewer> LoadedPlugins { get; private set; } = new List<IViewer>();
+    internal List<IViewer> LoadedPlugins { get; private set; } = [];
 
     internal static PluginManager GetInstance()
     {
-        return _instance ?? (_instance = new PluginManager());
+        return _instance ??= new PluginManager();
     }
 
     internal IViewer FindMatch(string path)
@@ -95,7 +95,7 @@ internal class PluginManager
                         .ForEach(type => LoadedPlugins.Add(type.CreateInstance<IViewer>()));
                 });
 
-        LoadedPlugins = LoadedPlugins.OrderByDescending(i => i.Priority).ToList();
+        LoadedPlugins = [.. LoadedPlugins.OrderByDescending(i => i.Priority)];
     }
 
     private void InitLoadedPlugins()

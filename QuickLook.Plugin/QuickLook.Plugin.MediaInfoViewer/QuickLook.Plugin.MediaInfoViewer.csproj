@@ -48,7 +48,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediaInfoDLL" Version="24.4.0" />
+		<PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+        <PackageReference Include="MediaInfoDLL" Version="24.4.1-rc1" />
     </ItemGroup>
 
     <ItemGroup>

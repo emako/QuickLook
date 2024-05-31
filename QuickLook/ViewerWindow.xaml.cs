@@ -98,8 +98,8 @@ public partial class ViewerWindow : Window
         buttonShare.Click += (sender, e) => ShareHelper.Share(_path, this);
         buttonOpenWith.Click += (sender, e) => ShareHelper.Share(_path, this, true);
 
-        menuItemBinaryViewer.Click += (sender, e) => Debugger.Break();
-        menuItemMediaInfoViewer.Click += (sender, e) => Debugger.Break();
+        menuItemBinaryViewer.Click += (sender, e) => ViewWindowManager.GetInstance().InvokePluginPreview("QuickLook.Plugin.BinaryViewer");
+        menuItemMediaInfoViewer.Click += (sender, e) => ViewWindowManager.GetInstance().InvokePluginPreview("QuickLook.Plugin.MediaInfoViewer");
 
         // Set UI translations
         buttonTop.ToolTip = TranslationHelper.Get("MW_StayTop");

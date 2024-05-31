@@ -16,18 +16,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using MediaInfoLib;
+using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
 using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Media;
 
-namespace QuickLook.Plugin.CsvViewer;
+namespace QuickLook.Plugin.MediaInfoViewer;
 
 public class Plugin : IViewer
 {
-    private TextBox _panel;
+    private TextViewerPanel _tvp;
 
     public int Priority => 0;
 
@@ -39,7 +40,9 @@ public class Plugin : IViewer
     {
         return false;
 
+#pragma warning disable CS0162 // Unreachable code detected
         using MediaInfo lib = new MediaInfo().WithOpen(path);
+#pragma warning restore CS0162 // Unreachable code detected
         return Enum.GetValues(typeof(StreamKind))
             .Cast<StreamKind>()
             .Where(v => v != StreamKind.General)
@@ -56,21 +59,57 @@ public class Plugin : IViewer
         using MediaInfo lib = new MediaInfo()
             .WithOpen(path);
 
-        _panel = new TextBox()
-        {
-            Text = lib.Inform(),
-            FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-        };
+        _tvp = new TextViewerPanel(lib.Inform(), context);
+        AssignHighlightingManager(_tvp, context);
 
-        context.ViewerContent = _panel;
+        _tvp.Tag = context;
+        _tvp.Drop += OnDrop;
+
+        context.ViewerContent = _tvp;
         context.Title = $"{Path.GetFileName(path)}";
         context.IsBusy = false;
+    }
+
+    private void OnDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            if (e.Data.GetData(DataFormats.FileDrop) is string[] files
+                && files.FirstOrDefault() is string path)
+            {
+                if (_tvp.Tag is ContextObject context)
+                {
+                    context.Title = $"{Path.GetFileName(path)}";
+                }
+
+                using MediaInfo lib = new MediaInfo()
+                    .WithOpen(path);
+                _tvp.Text = lib.Inform();
+            }
+        }
     }
 
     public void Cleanup()
     {
         GC.SuppressFinalize(this);
 
-        _panel = null;
+        _tvp = null;
+    }
+
+    private void AssignHighlightingManager(TextViewerPanel tvp, ContextObject context)
+    {
+        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.MediaInfoViewer");
+        var isDark = darkThemeAllowed && OSThemeHelper.AppsUseDarkTheme();
+
+        if (isDark)
+        {
+            tvp.Foreground = new BrushConverter().ConvertFromString("#FFEFEFEF") as SolidColorBrush;
+            tvp.Background = Brushes.Transparent;
+        }
+        else
+        {
+            tvp.Foreground = new BrushConverter().ConvertFromString("#BBFAFAFA") as SolidColorBrush;
+            tvp.Background = Brushes.Transparent;
+        }
     }
 }
