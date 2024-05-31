@@ -44,7 +44,7 @@ internal class Updater
         {
             try
             {
-                var json = DownloadJson("https://api.github.com/repos/xupefei/QuickLook/releases/latest");
+                var json = DownloadJson("https://api.github.com/repos/lemutec/QuickLook/releases/latest");
 
                 var nVersion = (string)json["tag_name"];
                 //nVersion = "9.2.1";
@@ -68,7 +68,7 @@ internal class Updater
                             timeout: 20000,
                             clickEvent:
                             () => Process.Start(
-                                @"https://github.com/xupefei/QuickLook/releases/latest"));
+                                @"https://github.com/lemutec/QuickLook/releases/latest"));
                     });
             }
             catch (Exception e)
@@ -87,7 +87,7 @@ internal class Updater
         {
             try
             {
-                var json = DownloadJson("https://api.github.com/repos/xupefei/QuickLook/releases");
+                var json = DownloadJson("https://api.github.com/repos/lemutec/QuickLook/releases");
 
                 var notes = "# QuickLook has been updated!\r\n";
 
