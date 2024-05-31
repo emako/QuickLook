@@ -12,6 +12,7 @@
 	    <LangVersion>12.0</LangVersion>
 	    <Platforms>AnyCPU;x64</Platforms>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<ApplicationManifest>App.manifest</ApplicationManifest>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -102,8 +103,6 @@
         <None Update="Translations.config">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="app.manifest" />
-        <None Update="App.config" />
     </ItemGroup>
 
     <ItemGroup>
