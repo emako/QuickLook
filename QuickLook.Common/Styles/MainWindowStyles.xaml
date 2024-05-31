@@ -19,7 +19,6 @@
 
     <Style x:Key="CaptionButtonBaseStyle" TargetType="Button">
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="{DynamicResource WindowTextForeground}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />

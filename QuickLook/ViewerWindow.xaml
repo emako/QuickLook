@@ -113,7 +113,6 @@
                             ToolTip="Share" />
                     <Button x:Name="buttonOpenIn"
                             Content="&#xe8a7;"
-                            Cursor="Arrow"
                             DockPanel.Dock="Right"
                             Style="{StaticResource CaptionButtonStyle}"
                             ToolTip="Open In">
