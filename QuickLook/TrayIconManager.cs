@@ -32,7 +32,7 @@ internal class TrayIconManager : IDisposable
     private readonly NotifyIcon _icon;
 
     private readonly MenuItem _itemAutorun =
-        new MenuItem(TranslationHelper.Get("Icon_RunAtStartup"),
+        new(TranslationHelper.Get("Icon_RunAtStartup"),
             (sender, e) =>
             {
                 if (AutoStartupHelper.IsAutorun())
@@ -49,8 +49,8 @@ internal class TrayIconManager : IDisposable
             Text = string.Format(TranslationHelper.Get("Icon_ToolTip"),
                 Application.ProductVersion),
             Icon = GetTrayIconByDPI(),
-            ContextMenu = new ContextMenu(new[]
-            {
+            ContextMenu = new ContextMenu(
+            [
                 new MenuItem($"v{Application.ProductVersion}{(App.IsUWP ? " (UWP)" : "")}") {Enabled = false},
                 new MenuItem("-"),
                 new MenuItem(TranslationHelper.Get("Icon_CheckUpdate"), (sender, e) => Updater.CheckForUpdates()),
@@ -59,7 +59,7 @@ internal class TrayIconManager : IDisposable
                 _itemAutorun,
                 new MenuItem(TranslationHelper.Get("Icon_Quit"),
                     (sender, e) => System.Windows.Application.Current.Shutdown())
-            }),
+            ]),
             Visible = SettingHelper.Get("ShowTrayIcon", true)
         };
 
@@ -107,6 +107,6 @@ internal class TrayIconManager : IDisposable
 
     public static TrayIconManager GetInstance()
     {
-        return _instance ?? (_instance = new TrayIconManager());
+        return _instance ??= new TrayIconManager();
     }
 }
