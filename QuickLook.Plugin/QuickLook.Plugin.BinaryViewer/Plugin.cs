@@ -124,7 +124,7 @@ public class Plugin : IViewer
 
     private void AssignHighlightingManager(BinaryViewerPanel bvp, ContextObject context)
     {
-        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.MediaInfoViewer");
+        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.BinaryViewer");
         var isDark = darkThemeAllowed && OSThemeHelper.AppsUseDarkTheme();
 
         if (isDark)

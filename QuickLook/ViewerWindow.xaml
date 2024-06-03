@@ -120,6 +120,7 @@
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem x:Name="menuItemBinaryViewer" Header="Binary Viewer" />
+                                <MenuItem x:Name="menuItemHashViewer" Header="Hash Viewer" />
                                 <MenuItem x:Name="menuItemMediaInfoViewer" Header="MediaInfo Viwer" />
                             </ContextMenu>
                         </Button.ContextMenu>

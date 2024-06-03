@@ -15,20 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using MediaInfoLib;
 using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace QuickLook.Plugin.MediaInfoViewer;
+namespace QuickLook.Plugin.BinaryViewer;
 
 public class Plugin : IViewer
 {
     private TextViewerPanel? _tvp;
+    private string? _path;
 
     public int Priority => 0;
 
@@ -39,14 +41,6 @@ public class Plugin : IViewer
     public bool CanHandle(string path)
     {
         return false;
-
-#pragma warning disable CS0162 // Unreachable code detected
-        using MediaInfo lib = new MediaInfo().WithOpen(path);
-#pragma warning restore CS0162 // Unreachable code detected
-        return Enum.GetValues(typeof(StreamKind))
-            .Cast<StreamKind>()
-            .Where(v => v != StreamKind.General)
-            .Any(v => lib.Count_Get(v) > 0);
     }
 
     public void Prepare(string path, ContextObject context)
@@ -56,18 +50,29 @@ public class Plugin : IViewer
 
     public void View(string path, ContextObject context)
     {
-        using MediaInfo lib = new MediaInfo()
-            .WithOpen(path);
-
-        _tvp = new TextViewerPanel(lib.Inform(), context);
+        _path = path;
+        _tvp = new TextViewerPanel();
         AssignHighlightingManager(_tvp, context);
+
+        _ = Task.Run(() =>
+        {
+            string text = LoadHash();
+            _tvp.LoadTextAsync(text);
+            context.IsBusy = false;
+        });
 
         _tvp.Tag = context;
         _tvp.Drop += OnDrop;
 
         context.ViewerContent = _tvp;
         context.Title = $"{Path.GetFileName(path)}";
-        context.IsBusy = false;
+    }
+
+    public void Cleanup()
+    {
+        GC.SuppressFinalize(this);
+
+        _tvp = null;
     }
 
     private void OnDrop(object sender, DragEventArgs e)
@@ -77,28 +82,46 @@ public class Plugin : IViewer
             if (e.Data.GetData(DataFormats.FileDrop) is string[] files
                 && files.FirstOrDefault() is string path)
             {
+                _path = path;
+
                 if (_tvp!.Tag is ContextObject context)
                 {
                     context.Title = $"{Path.GetFileName(path)}";
                 }
 
-                using MediaInfo lib = new MediaInfo()
-                    .WithOpen(path);
-                _tvp!.Text = lib.Inform();
+                string text = LoadHash();
+                _tvp.LoadTextAsync(text);
             }
         }
     }
 
-    public void Cleanup()
+    public string LoadHash()
     {
-        GC.SuppressFinalize(this);
+        if (!File.Exists(_path))
+        {
+            return "ERR: File Not Found.";
+        }
 
-        _tvp = null!;
+        try
+        {
+            byte[] buffer = File.ReadAllBytes(_path);
+            StringBuilder sb = new();
+
+            sb.AppendLine("FILE:");
+            sb.AppendLine(_path);
+            sb.AppendLine();
+            sb.Append(HashCalculator.ComputeHashAll(buffer));
+            return sb.ToString();
+        }
+        catch (Exception e)
+        {
+            return $"ERR: ${e.Message}";
+        }
     }
 
     private void AssignHighlightingManager(TextViewerPanel tvp, ContextObject context)
     {
-        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.MediaInfoViewer");
+        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.HashViewer");
         var isDark = darkThemeAllowed && OSThemeHelper.AppsUseDarkTheme();
 
         if (isDark)
