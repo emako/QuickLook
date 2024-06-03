@@ -20,7 +20,6 @@ using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
 using QuickLook.Helpers;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -112,6 +111,7 @@ public partial class ViewerWindow : Window
         // Set Dark mode resources
         _darkDict.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("pack://application:,,,/QuickLook.Common;component/Styles/MainWindowStyles.Dark.xaml") });
         _darkDict.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("pack://application:,,,/QuickLook.Common;component/Styles/MenuItemStyles.Dark.xaml") });
+        _darkDict.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("pack://application:,,,/QuickLook.Common;component/Styles/RadioButtonStyles.Dark.xaml") });
     }
 
     public override void OnApplyTemplate()

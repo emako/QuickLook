@@ -21,7 +21,6 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 using QuickLook.Common.Helpers;
-using QuickLook.Common.Plugin;
 using System;
 using System.Reflection;
 using System.Text;
@@ -32,22 +31,19 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace QuickLook.Plugin.MediaInfoViewer;
+namespace QuickLook.Plugin.BinaryViewer;
 
 public class TextViewerPanel : TextEditor, IDisposable
 {
-    private readonly ContextObject _context;
     private bool _disposed;
     private HighlightingManager highlightingManager = HighlightingManager.Instance;
     internal string _text;
 
-    public TextViewerPanel(string text, ContextObject context)
+    public TextViewerPanel()
     {
-        _context = context;
-
         Margin = new Thickness(8, 0, 0, 0);
         FontSize = 14;
-        ShowLineNumbers = false;
+        ShowLineNumbers = true;
         WordWrap = true;
         IsReadOnly = true;
         IsManipulationEnabled = true;
@@ -79,8 +75,6 @@ public class TextViewerPanel : TextEditor, IDisposable
         TextArea.TextView.ElementGenerators.Add(new TruncateLongLines());
 
         SearchPanel.Install(this);
-
-        LoadTextAsync(text);
     }
 
     public HighlightingManager HighlightingManager
@@ -146,7 +140,7 @@ public class TextViewerPanel : TextEditor, IDisposable
         }
     }
 
-    private void LoadTextAsync(string text)
+    public void LoadTextAsync(string text)
     {
         _text = text;
 
@@ -165,8 +159,6 @@ public class TextViewerPanel : TextEditor, IDisposable
             {
                 Encoding = Encoding.UTF8;
                 Document = doc;
-
-                _context.IsBusy = false;
             }), DispatcherPriority.Render);
         });
     }

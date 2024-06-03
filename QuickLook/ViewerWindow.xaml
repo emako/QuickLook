@@ -29,6 +29,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/QuickLook.Common;component/Styles/MainWindowStyles.xaml" />
                 <ResourceDictionary Source="/QuickLook.Common;component/Styles/MenuItemStyles.xaml" />
+                <ResourceDictionary Source="/QuickLook.Common;component/Styles/RadioButtonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:WindowStateMaximizedToThicknessConverter x:Key="WindowStateMaximizedToThicknessConverter" />
             <converters:WindowStateNormalToThicknessConverter x:Key="WindowStateNormalToThicknessConverter" />
