@@ -19,8 +19,10 @@ using QuickLook.Common.Helpers;
 using QuickLook.Helpers;
 using QuickLook.Properties;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace QuickLook;
@@ -57,6 +59,8 @@ internal class TrayIconManager : IDisposable
                 new MenuItem(TranslationHelper.Get("Icon_GetPlugin"),
                     (sender, e) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins")),
                 _itemAutorun,
+                new MenuItem(TranslationHelper.Get("Icon_Restart"),
+                    (sender, e) => Restart(forced: true)),
                 new MenuItem(TranslationHelper.Get("Icon_Quit"),
                     (sender, e) => System.Windows.Application.Current.Shutdown())
             ]),
@@ -69,6 +73,32 @@ internal class TrayIconManager : IDisposable
     public void Dispose()
     {
         _icon.Visible = false;
+    }
+
+    public void Restart(string fileName = null!, string dir = null!, string args = null!, int? exitCode = null, bool forced = false)
+    {
+        try
+        {
+            Process process = new()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = fileName ?? Path.Combine(dir ?? AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName),
+                    WorkingDirectory = dir ?? Environment.CurrentDirectory,
+                    UseShellExecute = true,
+                },
+            };
+            process.Start();
+        }
+        catch (Win32Exception)
+        {
+            return;
+        }
+        if (forced)
+        {
+            Process.GetCurrentProcess().Kill();
+        }
+        Environment.Exit(exitCode ?? 'r' + 'e' + 's' + 't' + 'a' + 'r' + 't');
     }
 
     private Icon GetTrayIconByDPI()
