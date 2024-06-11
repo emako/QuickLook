@@ -39,7 +39,7 @@ public class TextViewerPanel : TextEditor, IDisposable
     private readonly ContextObject _context;
     private bool _disposed;
     private HighlightingManager highlightingManager = HighlightingManager.Instance;
-    internal string _text;
+    internal string? _text;
 
     public TextViewerPanel(string text, ContextObject context)
     {

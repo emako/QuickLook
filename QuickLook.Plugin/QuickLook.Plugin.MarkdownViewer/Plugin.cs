@@ -31,7 +31,7 @@ namespace QuickLook.Plugin.MarkdownViewer;
 
 public class Plugin : IViewer
 {
-    private WebpagePanel _panel;
+    private WebpagePanel? _panel;
 
     public int Priority => 0;
 

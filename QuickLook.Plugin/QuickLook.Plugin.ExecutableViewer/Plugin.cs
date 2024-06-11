@@ -15,20 +15,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using MediaInfoLib;
 using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
+using QuickLook.Plugin.HashViewer;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace QuickLook.Plugin.MediaInfoViewer;
+namespace QuickLook.Plugin.BinaryViewer;
 
 public class Plugin : IViewer
 {
+    private static readonly HashSet<string> hashSet =
+    [
+        ".exe", ".sys", ".scr", ".ocx", ".cpl", ".bpl",
+        ".dll", ".ax", ".drv", ".vxd",
+        ".mui",
+        ".pdb",
+        ".tlb",
+        ".msi",
+        ".efi", ".mz",
+    ];
+
+    private static readonly HashSet<string> WellKnownImageExtensions = hashSet;
+
     private TextViewerPanel? _tvp;
+    private string? _path;
 
     public int Priority => 0;
 
@@ -38,15 +55,7 @@ public class Plugin : IViewer
 
     public bool CanHandle(string path)
     {
-        return false;
-
-#pragma warning disable CS0162 // Unreachable code detected
-        using MediaInfo lib = new MediaInfo().WithOpen(path);
-#pragma warning restore CS0162 // Unreachable code detected
-        return Enum.GetValues(typeof(StreamKind))
-            .Cast<StreamKind>()
-            .Where(v => v != StreamKind.General)
-            .Any(v => lib.Count_Get(v) > 0);
+        return WellKnownImageExtensions.Contains(Path.GetExtension(path.ToLower()));
     }
 
     public void Prepare(string path, ContextObject context)
@@ -56,59 +65,60 @@ public class Plugin : IViewer
 
     public void View(string path, ContextObject context)
     {
-        using MediaInfo lib = new MediaInfo()
-            .WithOpen(path);
-
-        _tvp = new TextViewerPanel(lib.Inform(), context);
+        _path = path;
+        _tvp = new TextViewerPanel();
         AssignHighlightingManager(_tvp, context);
 
+        _ = Task.Run(() =>
+        {
+            string text = LoadHash();
+            _tvp.LoadTextAsync(text);
+            context.IsBusy = false;
+        });
+
         _tvp.Tag = context;
-        _tvp.Drop += OnDrop;
 
         context.ViewerContent = _tvp;
         context.Title = $"{Path.GetFileName(path)}";
-        context.IsBusy = false;
-    }
-
-    private void OnDrop(object sender, DragEventArgs e)
-    {
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
-        {
-            if (e.Data.GetData(DataFormats.FileDrop) is string[] files
-                && files.FirstOrDefault() is string path)
-            {
-                if (_tvp!.Tag is ContextObject context)
-                {
-                    context.Title = $"{Path.GetFileName(path)}";
-                }
-
-                using MediaInfo lib = new MediaInfo()
-                    .WithOpen(path);
-                _tvp!.Text = lib.Inform();
-            }
-        }
     }
 
     public void Cleanup()
     {
         GC.SuppressFinalize(this);
 
-        _tvp = null!;
+        _tvp = null;
+    }
+
+    public string LoadHash()
+    {
+        if (!File.Exists(_path))
+        {
+            return "ERR: File Not Found.";
+        }
+
+        try
+        {
+            // https://learn.microsoft.com/zh-cn/windows/win32/debug/pe-format
+            return HeaderReader.GetHeaders(_path!);
+        }
+        catch (Exception e)
+        {
+            return $"ERR: ${e.Message}";
+        }
     }
 
     private void AssignHighlightingManager(TextViewerPanel tvp, ContextObject context)
     {
-        var isDark = OSThemeHelper.AppsUseDarkTheme();
+        var darkThemeAllowed = SettingHelper.Get("AllowDarkTheme", false, "QuickLook.Plugin.HashViewer");
+        var isDark = darkThemeAllowed && OSThemeHelper.AppsUseDarkTheme();
 
         if (isDark)
         {
-            context.Theme = Themes.Dark;
             tvp.Foreground = new BrushConverter().ConvertFromString("#FFEFEFEF") as SolidColorBrush;
             tvp.Background = Brushes.Transparent;
         }
         else
         {
-            context.Theme = Themes.Light;
             tvp.Foreground = new BrushConverter().ConvertFromString("#BBFAFAFA") as SolidColorBrush;
             tvp.Background = Brushes.Transparent;
         }

@@ -54,8 +54,8 @@ public class Plugin : IViewer
 
     private static readonly HashSet<string> WellKnownImageExtensions = hashSet;
 
-    private ImagePanel _ip;
-    private MetaProvider _meta;
+    private ImagePanel? _ip;
+    private MetaProvider? _meta;
 
     public int Priority => 0;
 
@@ -120,7 +120,7 @@ public class Plugin : IViewer
 
     public void View(string path, ContextObject context)
     {
-        _ip = new ImagePanel(context, _meta);
+        _ip = new ImagePanel(context, _meta!);
         var size = _meta.GetSize();
 
         context.ViewerContent = _ip;
