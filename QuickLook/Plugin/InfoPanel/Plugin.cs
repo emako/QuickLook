@@ -22,7 +22,7 @@ namespace QuickLook.Plugin.InfoPanel;
 
 public class Plugin : IViewer
 {
-    private InfoPanel _ip;
+    private InfoPanel? _ip;
 
     public int Priority => int.MinValue;
 

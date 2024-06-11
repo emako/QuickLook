@@ -31,7 +31,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace QuickLook.Plugin.BinaryViewer;
+namespace QuickLook.Plugin.ExecutableViewer;
 
 public class TextViewerPanel : TextEditor, IDisposable
 {

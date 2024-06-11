@@ -15,12 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace QuickLook.Plugin.HashViewer;
+namespace QuickLook.Plugin.ExecutableViewer;
 
 internal sealed class HeaderReader
 {
@@ -30,7 +29,7 @@ internal sealed class HeaderReader
     private static long OffSetHeader = 0;
 
     [StructLayout(LayoutKind.Sequential)]
-    struct IMAGE_DOS_HEADER
+    private struct IMAGE_DOS_HEADER
     {
         public ushort e_magic;
         public ushort e_cblp;
@@ -60,7 +59,7 @@ internal sealed class HeaderReader
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct IMAGE_FILE_HEADER
+    private struct IMAGE_FILE_HEADER
     {
         public ushort Machine;
         public ushort NumberOfSections;
@@ -72,7 +71,7 @@ internal sealed class HeaderReader
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct IMAGE_OPTIONAL_HEADER
+    private struct IMAGE_OPTIONAL_HEADER
     {
         public ushort Magic;
         public byte MajorLinkerVersion;
@@ -110,7 +109,7 @@ internal sealed class HeaderReader
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct IMAGE_SECTION_HEADER
+    private struct IMAGE_SECTION_HEADER
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public byte[] Name;
@@ -125,7 +124,7 @@ internal sealed class HeaderReader
         public uint Characteristics;
     }
 
-    static void CalculateOffset(FileStream fs)
+    private static void CalculateOffset(FileStream fs)
     {
         var dosheader = ReadStruct<IMAGE_DOS_HEADER>(fs);
         OffDosHeader = 0;
@@ -136,7 +135,7 @@ internal sealed class HeaderReader
         fs.Seek(0, SeekOrigin.Begin);
     }
 
-    static T ReadStruct<T>(FileStream fs) where T : struct
+    private static T ReadStruct<T>(FileStream fs) where T : struct
     {
         var buffer = new byte[Marshal.SizeOf<T>()];
         fs.Read(buffer, 0, buffer.Length);
@@ -146,9 +145,9 @@ internal sealed class HeaderReader
         return result;
     }
 
-    class DosHeader
+    private class DosHeader
     {
-        private IMAGE_DOS_HEADER dosheader;
+        public IMAGE_DOS_HEADER dosheader;
         private FileStream fs;
 
         public DosHeader(FileStream f)
@@ -184,9 +183,45 @@ internal sealed class HeaderReader
         }
     }
 
-    class FileHeader
+    private class FileHeader
     {
-        private IMAGE_FILE_HEADER fileHeader;
+        public enum MachineType
+        {
+            IMAGE_FILE_MACHINE_UNKNOWN = 0x0,
+            IMAGE_FILE_MACHINE_TARGET_HOST = 0x0001, // Useful for indicating we want to interact with the host and not a WoW guest.
+            IMAGE_FILE_MACHINE_I386 = 0x014c,  // Intel 386.
+            IMAGE_FILE_MACHINE_R3000 = 0x0162, // MIPS little-endian, 0x160 big-endian
+            IMAGE_FILE_MACHINE_R4000 = 0x0166, // MIPS little-endian
+            IMAGE_FILE_MACHINE_R10000 = 0x0168, // MIPS little-endian
+            IMAGE_FILE_MACHINE_WCEMIPSV2 = 0x0169, // MIPS little-endian WCE v2
+            IMAGE_FILE_MACHINE_ALPHA = 0x0184, // Alpha_AXP
+            IMAGE_FILE_MACHINE_SH3 = 0x01a2, // SH3 little-endian
+            IMAGE_FILE_MACHINE_SH3DSP = 0x01a3,
+            IMAGE_FILE_MACHINE_SH3E = 0x01a4, // SH3E little-endian
+            IMAGE_FILE_MACHINE_SH4 = 0x01a6, // SH4 little-endian
+            IMAGE_FILE_MACHINE_SH5 = 0x01a8, // SH5
+            IMAGE_FILE_MACHINE_ARM = 0x01c0, // ARM Little-Endian
+            IMAGE_FILE_MACHINE_THUMB = 0x01c2, // ARM Thumb/Thumb-2 Little-Endian
+            IMAGE_FILE_MACHINE_ARMNT = 0x01c4, // ARM Thumb-2 Little-Endian
+            IMAGE_FILE_MACHINE_AM33 = 0x01d3,
+            IMAGE_FILE_MACHINE_POWERPC = 0x01F0, // IBM PowerPC Little-Endian
+            IMAGE_FILE_MACHINE_POWERPCFP = 0x01f1,
+            IMAGE_FILE_MACHINE_IA64 = 0x0200, // Intel 64
+            IMAGE_FILE_MACHINE_MIPS16 = 0x0266,// MIPS
+            IMAGE_FILE_MACHINE_ALPHA64 = 0x0284,// ALPHA64
+            IMAGE_FILE_MACHINE_MIPSFPU = 0x0366,// MIPS
+            IMAGE_FILE_MACHINE_MIPSFPU16 = 0x0466,// MIPS
+            IMAGE_FILE_MACHINE_AXP64 = IMAGE_FILE_MACHINE_ALPHA64,
+            IMAGE_FILE_MACHINE_TRICORE = 0x0520,// Infineon
+            IMAGE_FILE_MACHINE_CEF = 0x0CEF,
+            IMAGE_FILE_MACHINE_EBC = 0x0EBC, // EFI Byte Code
+            IMAGE_FILE_MACHINE_AMD64 = 0x8664, // AMD64 (K8)
+            IMAGE_FILE_MACHINE_M32R = 0x9041, // M32R little-endian
+            IMAGE_FILE_MACHINE_ARM64 = 0xAA64, // ARM64 Little-Endian
+            IMAGE_FILE_MACHINE_CEE = 0xC0EE,
+        }
+
+        public IMAGE_FILE_HEADER fileHeader;
         private FileStream fs;
 
         public FileHeader(FileStream f)
@@ -212,21 +247,21 @@ internal sealed class HeaderReader
             return sb.ToString();
         }
 
-        private string ShowMachineType(ushort machine)
+        public string ShowMachineType(ushort machine)
         {
-            return machine switch
+            return (MachineType)machine switch
             {
-                0x014c => "Architecture: x86 (32-bit)",
-                0x8664 => ("Architecture: x64 (64-bit)"),
-                0x0200 => ("Architecture: IA64 (Itanium)"),
+                MachineType.IMAGE_FILE_MACHINE_I386 => "Architecture: x86 (32-bit)",
+                MachineType.IMAGE_FILE_MACHINE_AMD64 => "Architecture: x64 (64-bit)",
+                MachineType.IMAGE_FILE_MACHINE_IA64 => "Architecture: IA64 (Itanium)",
                 _ => ($"Unknown architecture: {machine:X}"),
             };
         }
     }
 
-    class OptHeader
+    private class OptHeader
     {
-        private IMAGE_OPTIONAL_HEADER optHeader;
+        public IMAGE_OPTIONAL_HEADER optHeader;
         private FileStream fs;
 
         public OptHeader(FileStream f)
@@ -273,18 +308,17 @@ internal sealed class HeaderReader
         }
     }
 
-    class SecHeader
+    private class SecHeader
     {
-        private IMAGE_SECTION_HEADER secHeader;
+        public IMAGE_SECTION_HEADER secHeader;
         private int NoOfSec;
         private FileStream fs;
 
         public SecHeader(FileStream f)
         {
-            var fileHeader = new IMAGE_FILE_HEADER();
             fs = f;
             fs.Seek(OffFileHeader, SeekOrigin.Begin);
-            fileHeader = ReadStruct<IMAGE_FILE_HEADER>(fs);
+            var fileHeader = ReadStruct<IMAGE_FILE_HEADER>(fs);
             NoOfSec = fileHeader.NumberOfSections;
 
             fs.Seek(OffSetHeader, SeekOrigin.Begin);
@@ -298,7 +332,7 @@ internal sealed class HeaderReader
             sb.AppendLine("\n----------------SECTION HEADER INFO-----------");
             while (NoOfSec != 0)
             {
-                sb.AppendLine($"Name: {System.Text.Encoding.ASCII.GetString(secHeader.Name)}");
+                sb.AppendLine($"Name: {Encoding.ASCII.GetString(secHeader.Name)}");
                 sb.AppendLine($"Virtual Address: {secHeader.VirtualAddress}");
                 sb.AppendLine($"Size Of Raw Data: {secHeader.SizeOfRawData}");
                 sb.AppendLine($"Pointer To Raw Data: {secHeader.PointerToRawData}");
@@ -316,7 +350,7 @@ internal sealed class HeaderReader
         }
     }
 
-    public static string GetHeaders(string fileName)
+    public static string GetHeaderStrings(string fileName)
     {
         using FileStream fs = new(fileName, FileMode.Open, FileAccess.Read);
 
@@ -346,5 +380,49 @@ internal sealed class HeaderReader
         }
 
         return sb.ToString();
+    }
+
+    public static string GetArchitecture(string fileName)
+    {
+        using FileStream fs = new(fileName, FileMode.Open, FileAccess.Read);
+
+        CalculateOffset(fs);
+        var dh = new FileHeader(fs);
+        var machine = (FileHeader.MachineType)dh.fileHeader.Machine;
+
+        return machine switch
+        {
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_TARGET_HOST => "HOST",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_I386 => "x86",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_R3000 => "R3000",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_R4000 => "R4000",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_R10000 => "R10000",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_WCEMIPSV2 => "WCEMIPSV2",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_ALPHA => "ALPHA",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_SH3 => "SH3",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_SH3DSP => "SH3DSP",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_SH3E => "SH3E",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_SH4 => "SH4",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_SH5 => "SH5",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_ARM => "ARM",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_THUMB => "THUMB",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_ARMNT => "ARMNT",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_AM33 => "AM33",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_POWERPC => "POWERPC",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_POWERPCFP => "POWERPCFP",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_IA64 => "IA64",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_MIPS16 => "MIPS16",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_ALPHA64 or FileHeader.MachineType.IMAGE_FILE_MACHINE_AXP64 => "ALPHA64",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_MIPSFPU => "MIPSFPU",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_MIPSFPU16 => "MIPSFPU16",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_TRICORE => "TRICORE",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_CEF => "CEF",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_EBC => "EBC",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_AMD64 => "x64",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_M32R => "M32R",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_ARM64 => "ARM64",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_CEE => "CEE",
+            FileHeader.MachineType.IMAGE_FILE_MACHINE_UNKNOWN or _ => "UNKNOWN",
+        };
     }
 }
