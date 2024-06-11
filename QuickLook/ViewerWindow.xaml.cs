@@ -107,7 +107,7 @@ public partial class ViewerWindow : Window
         buttonOpenWith.ToolTip = TranslationHelper.Get("MW_OpenWithMenu");
         buttonShare.ToolTip = TranslationHelper.Get("MW_Share");
         menuItemBinaryViewer.Header = TranslationHelper.Get("MW_BinaryViewer");
-        menuItemBinaryViewer.Header = TranslationHelper.Get("MW_HashViewer");
+        menuItemHashViewer.Header = TranslationHelper.Get("MW_HashViewer");
         menuItemMediaInfoViewer.Header = TranslationHelper.Get("MW_MediaInfoViewer");
 
         // Set Dark mode resources

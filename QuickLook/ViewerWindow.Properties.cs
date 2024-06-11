@@ -18,7 +18,6 @@
 using QuickLook.Common.Annotations;
 using QuickLook.Common.Helpers;
 using QuickLook.Common.Plugin;
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -52,7 +51,7 @@ public partial class ViewerWindow : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -90,13 +89,19 @@ public partial class ViewerWindow : INotifyPropertyChanged
         {
             CurrentTheme = Themes.Dark;
             if (!Resources.MergedDictionaries.Contains(DarkDict))
+            {
                 Resources.MergedDictionaries.Add(DarkDict);
+            }
         }
         else
         {
             CurrentTheme = Themes.Light;
             if (Resources.MergedDictionaries.Contains(DarkDict))
+            {
                 Resources.MergedDictionaries.Remove(DarkDict);
+            }
         }
+
+        OnApplyTemplate();
     }
 }
