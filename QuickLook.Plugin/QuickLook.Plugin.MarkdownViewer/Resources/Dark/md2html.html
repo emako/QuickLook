@@ -34,9 +34,11 @@ jopf:"\ud835\udd5b",Jscr:"\ud835\udca5",jscr:"\ud835\udcbf",Jsercy:"\u0408",jser
         color: #e6edf3;
       }
       .markdown-body {
-        margin: -8px 0px -8px 0px;
-        width: 80%;
-        padding-left: calc(20% + 8px);
+        margin: 0;
+        padding: 8px;
+        height: calc(100vh - 8px);
+        width: calc(80% - 8px);
+        padding-left: 20%;
       }
       #toc {
         font-family: "Segoe UI", Helvetica, Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
@@ -44,7 +46,7 @@ jopf:"\ud835\udd5b",Jscr:"\ud835\udca5",jscr:"\ud835\udcbf",Jsercy:"\u0408",jser
         top: 0;
         left: 0;
         width: 18%;
-        height: 100%;
+        height: 100vh;
         background: #0d1117;
         color: #e6edf3;
         overflow: auto;
@@ -85,6 +87,9 @@ jopf:"\ud835\udd5b",Jscr:"\ud835\udca5",jscr:"\ud835\udcbf",Jsercy:"\u0408",jser
         to {
           background: #0d1117;
         }
+      }
+      * {
+        margin: 0;
       }
     </style>
     <textarea id="text-input" style="display:none;">{{content}}</textarea>
@@ -147,7 +152,7 @@ jopf:"\ud835\udd5b",Jscr:"\ud835\udca5",jscr:"\ud835\udcbf",Jsercy:"\u0408",jser
       
       if(count < 2) {
         $("#toc").hide();
-        $(".markdown-body").css({"width": "100%", "padding-left": "0%"});
+        $(".markdown-body").css({"width": "calc(100% - 8px)", "padding-left": "0%", "padding": "8px 0 0 8px", });
       }
     </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
