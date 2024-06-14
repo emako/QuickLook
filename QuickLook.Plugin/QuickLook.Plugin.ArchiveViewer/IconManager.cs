@@ -34,14 +34,14 @@ namespace QuickLook.Plugin.ArchiveViewer;
 /// </summary>
 public static class IconManager
 {
-    private static ImageSource SmallDirIcon;
-    private static ImageSource LargeDirIcon;
-    private static readonly Dictionary<string, ImageSource> SmallIconCache = new Dictionary<string, ImageSource>();
-    private static readonly Dictionary<string, ImageSource> LargeIconCache = new Dictionary<string, ImageSource>();
+    private static ImageSource SmallDirIcon = null!;
+    private static ImageSource LargeDirIcon = null!;
+    private static readonly Dictionary<string, ImageSource> SmallIconCache = [];
+    private static readonly Dictionary<string, ImageSource> LargeIconCache = [];
 
     public static void ClearCache()
     {
-        SmallDirIcon = LargeDirIcon = null;
+        SmallDirIcon = LargeDirIcon = null!;
 
         SmallIconCache.Clear();
         LargeIconCache.Clear();
