@@ -34,9 +34,9 @@ public class SettingHelper
             : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 @"pooi.moe\QuickLook\");
 
-    private static readonly Dictionary<string, XmlDocument> FileCache = new Dictionary<string, XmlDocument>();
+    private static readonly Dictionary<string, XmlDocument> FileCache = [];
 
-    public static T Get<T>(string id, T failsafe = default, string domain = "QuickLook")
+    public static T Get<T>(string id, T failsafe = default!, string domain = "QuickLook")
     {
         if (!typeof(T).IsSerializable && !typeof(ISerializable).IsAssignableFrom(typeof(T)))
             throw new InvalidOperationException("A serializable Type is required");

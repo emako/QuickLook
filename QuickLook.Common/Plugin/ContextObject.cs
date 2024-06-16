@@ -192,7 +192,7 @@ public class ContextObject : INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged = null!;
 
     /// <summary>
     ///     Set the size of viewer window, scale or shrink to fit (to screen resolution).
@@ -233,13 +233,13 @@ public class ContextObject : INotifyPropertyChanged
         TitlebarBlurVisibility = false;
         TitlebarColourVisibility = true;
 
-        ViewerContent = null;
+        ViewerContent = null!;
 
-        ColorProfileName = null;
+        ColorProfileName = null!;
     }
 
     [NotifyPropertyChangedInvocator]
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

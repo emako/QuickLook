@@ -44,7 +44,7 @@ public class FileHelper
         return true;
     }
 
-    public static string CreateTempFile(string folder, string filename = null)
+    public static string CreateTempFile(string folder, string filename = null!)
     {
         if (string.IsNullOrWhiteSpace(filename))
             filename = Guid.NewGuid() + ".tmp";
