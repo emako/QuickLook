@@ -154,7 +154,12 @@
                         <Button.Resources>
                             <Grid x:Key="ContentTop">
                                 <TextBlock>&#xE898;</TextBlock>
-                                <TextBlock>&#xE872;</TextBlock>
+                                <TextBlock>
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform X="6" Y="2" />
+                                    </TextBlock.RenderTransform>
+                                    &#xE872;
+                                </TextBlock>
                             </Grid>
                         </Button.Resources>
                         <Button.Style>
