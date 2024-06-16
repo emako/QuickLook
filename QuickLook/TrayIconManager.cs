@@ -53,7 +53,7 @@ internal class TrayIconManager : IDisposable
             Icon = GetTrayIconByDPI(),
             ContextMenu = new ContextMenu(
             [
-                new MenuItem($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (Mod v1.0)") {Enabled = false},
+                new MenuItem($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (r1)") {Enabled = false},
                 new MenuItem("-"),
                 new MenuItem(TranslationHelper.Get("Icon_CheckUpdate"), (_, _) => Updater.CheckForUpdates()),
                 new MenuItem(TranslationHelper.Get("Icon_InstalledPlugin"), (_, _) => Process.Start($"file://{App.UserPluginPath}")),
