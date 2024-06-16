@@ -29,7 +29,7 @@ namespace QuickLook;
 
 internal class TrayIconManager : IDisposable
 {
-    private static TrayIconManager _instance;
+    private static TrayIconManager _instance = null!;
 
     private readonly NotifyIcon _icon;
 
@@ -55,14 +55,15 @@ internal class TrayIconManager : IDisposable
             [
                 new MenuItem($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (Mod v1.0)") {Enabled = false},
                 new MenuItem("-"),
-                new MenuItem(TranslationHelper.Get("Icon_CheckUpdate"), (sender, e) => Updater.CheckForUpdates()),
+                new MenuItem(TranslationHelper.Get("Icon_CheckUpdate"), (_, _) => Updater.CheckForUpdates()),
+                new MenuItem(TranslationHelper.Get("Icon_InstalledPlugin"), (_, _) => Process.Start($"file://{App.UserPluginPath}")),
                 new MenuItem(TranslationHelper.Get("Icon_GetPlugin"),
-                    (sender, e) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins")),
+                    (_, _) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins")),
                 _itemAutorun,
                 new MenuItem(TranslationHelper.Get("Icon_Restart"),
-                    (sender, e) => Restart(forced: true)),
+                    (_, _) => Restart(forced: true)),
                 new MenuItem(TranslationHelper.Get("Icon_Quit"),
-                    (sender, e) => System.Windows.Application.Current.Shutdown())
+                    (_, _) => System.Windows.Application.Current.Shutdown())
             ]),
             Visible = SettingHelper.Get("ShowTrayIcon", true)
         };
@@ -77,6 +78,8 @@ internal class TrayIconManager : IDisposable
 
     public void Restart(string fileName = null!, string dir = null!, string args = null!, int? exitCode = null, bool forced = false)
     {
+        _ = args;
+
         try
         {
             Process process = new()
@@ -114,8 +117,8 @@ internal class TrayIconManager : IDisposable
     }
 
     public static void ShowNotification(string title, string content, bool isError = false, int timeout = 5000,
-        Action clickEvent = null,
-        Action closeEvent = null)
+        Action clickEvent = null!,
+        Action closeEvent = null!)
     {
         var icon = GetInstance()._icon;
         icon.ShowBalloonTip(timeout, title, content, isError ? ToolTipIcon.Error : ToolTipIcon.Info);
