@@ -74,13 +74,13 @@
 	    <Reference Include="System.Management" />
 	    <Reference Include="Microsoft.CSharp" />
 	    <Reference Include="windows">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.22621.0\Facade\windows.winmd</HintPath>
+		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0\Facade\windows.winmd</HintPath>
 	    </Reference>
 	    <Reference Include="Windows.Foundation.FoundationContract">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.22621.0\Windows.Foundation.FoundationContract\4.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
+		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.FoundationContract\4.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
 	    </Reference>
 	    <Reference Include="Windows.Foundation.UniversalApiContract">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.22621.0\Windows.Foundation.UniversalApiContract\15.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.UniversalApiContract\19.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
 	    </Reference>
     </ItemGroup>
 
