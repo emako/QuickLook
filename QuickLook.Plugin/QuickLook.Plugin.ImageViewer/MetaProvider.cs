@@ -61,7 +61,7 @@ public class MetaProvider
             var label = node.Attributes?["Label"]?.InnerText;
             var value = node.InnerText;
 
-            _cache.Add(key, (label, value));
+            _cache.Add(key, (label, value)!);
         }
 
         return _cache;
@@ -69,7 +69,7 @@ public class MetaProvider
 
     public byte[] GetThumbnail()
     {
-        return NativeMethods.GetThumbnail(_path) ?? new byte[0];
+        return NativeMethods.GetThumbnail(_path) ?? [];
     }
 
     public Size GetSize()
@@ -106,7 +106,7 @@ internal static class NativeMethods
     {
         try
         {
-            var len = Is64 ? GetExif_64(file, null) : GetExif_32(file, null);
+            var len = Is64 ? GetExif_64(file, null!) : GetExif_32(file, null!);
             if (len <= 0)
                 return string.Empty;
 
@@ -126,9 +126,9 @@ internal static class NativeMethods
     {
         try
         {
-            var len = Is64 ? GetThumbnail_64(file, null) : GetThumbnail_32(file, null);
+            var len = Is64 ? GetThumbnail_64(file, null!) : GetThumbnail_32(file, null!);
             if (len <= 0)
-                return null;
+                return null!;
 
             var buffer = new byte[len];
             var _ = Is64 ? GetThumbnail_64(file, buffer) : GetThumbnail_32(file, buffer);
@@ -138,7 +138,7 @@ internal static class NativeMethods
         catch (Exception e)
         {
             Debug.WriteLine(e);
-            return null;
+            return null!;
         }
     }
 

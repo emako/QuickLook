@@ -50,7 +50,7 @@ public partial class ImagePanel : UserControl, INotifyPropertyChanged, IDisposab
     private DateTime _lastZoomTime = DateTime.MinValue;
     private double _maxZoomFactor = 3d;
     private MetaProvider _meta;
-    private Visibility _metaIconVisibility = Visibility.Visible;
+    private Visibility _metaIconVisibility = Visibility.Collapsed;
     private double _minZoomFactor = 0.1d;
     private BitmapScalingMode _renderMode = BitmapScalingMode.Linear;
     private bool _showZoomLevelInfo = true;
