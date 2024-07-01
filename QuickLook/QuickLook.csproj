@@ -2,20 +2,20 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-	    <TargetFramework>net462</TargetFramework>
+        <TargetFramework>net462</TargetFramework>
         <AssemblyName>QuickLook</AssemblyName>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <ApplicationIcon>Resources\app.ico</ApplicationIcon>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <UseWPF>true</UseWPF>
-	    <UseWindowsForms>true</UseWindowsForms>
-	    <LangVersion>12.0</LangVersion>
-	    <Platforms>AnyCPU;x64</Platforms>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<ApplicationManifest>App.manifest</ApplicationManifest>
-		<AssemblyVersion>3.7.3</AssemblyVersion>
-		<FileVersion>3.7.3</FileVersion>
-		<Version>$(VersionPrefix)3.7.3</Version>
+        <UseWindowsForms>true</UseWindowsForms>
+        <LangVersion>12.0</LangVersion>
+        <Platforms>AnyCPU;x64</Platforms>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <ApplicationManifest>App.manifest</ApplicationManifest>
+        <AssemblyVersion>3.7.3</AssemblyVersion>
+        <FileVersion>3.7.3</FileVersion>
+        <Version>$(VersionPrefix)3.7.3</Version>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -71,39 +71,39 @@
     </PropertyGroup>
 
     <ItemGroup>
-	    <Reference Include="System.Management" />
-	    <Reference Include="Microsoft.CSharp" />
-	    <Reference Include="windows">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0\Facade\windows.winmd</HintPath>
-	    </Reference>
-	    <Reference Include="Windows.Foundation.FoundationContract">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.FoundationContract\4.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
-	    </Reference>
-	    <Reference Include="Windows.Foundation.UniversalApiContract">
-		    <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.UniversalApiContract\19.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-	    </Reference>
+        <Reference Include="System.Management" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="windows">
+            <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0\Facade\windows.winmd</HintPath>
+        </Reference>
+        <Reference Include="Windows.Foundation.FoundationContract">
+            <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.FoundationContract\4.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
+        </Reference>
+        <Reference Include="Windows.Foundation.UniversalApiContract">
+            <HintPath>$(SystemRoot)\..\Program Files (x86)\Windows Kits\10\References\10.0.26100.0\Windows.Foundation.UniversalApiContract\19.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
     </ItemGroup>
 
-	<ItemGroup>
-		<None Remove="Controls\GlassLayer\100-50-5-monochrome.png" />
-		<None Remove="Controls\GlassLayer\GaussianBlur.ps" />
-		<None Remove="Resources\app.ico" />
-		<None Remove="Fonts\*.ttf" />
-	</ItemGroup>
-	<ItemGroup>
-		<Resource Include="Controls\GlassLayer\100-50-5-monochrome.png" />
-		<Resource Include="Controls\GlassLayer\GaussianBlur.ps" />
-		<Resource Include="Resources\app.ico" />
-		<Resource Include="Fonts\*.ttf" />
-	</ItemGroup>
+    <ItemGroup>
+        <None Remove="Controls\GlassLayer\100-50-5-monochrome.png" />
+        <None Remove="Controls\GlassLayer\GaussianBlur.ps" />
+        <None Remove="Resources\app.ico" />
+        <None Remove="Fonts\*.ttf" />
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Controls\GlassLayer\100-50-5-monochrome.png" />
+        <Resource Include="Controls\GlassLayer\GaussianBlur.ps" />
+        <Resource Include="Resources\app.ico" />
+        <Resource Include="Fonts\*.ttf" />
+    </ItemGroup>
 
-	<ItemGroup>
+    <ItemGroup>
         <None Update="Resources\app.ico" />
         <None Update="Translations.config">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
