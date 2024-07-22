@@ -9,6 +9,7 @@
         <SignAssembly>false</SignAssembly>
 	    <UseWPF>true</UseWPF>
 	    <LangVersion>12.0</LangVersion>
+		<Nullable>enable</Nullable>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 

@@ -120,7 +120,7 @@ internal static class BinaryConverter
         for (int i = startIndex; i < startIndex + length; i++)
         {
             byte b = value[i];
-            result.Append(b.ToString("D3"));
+            result.Append(b.ToString().PadRight(3, ' '));
             if (sep != '\0')
             {
                 result.Append(sep);

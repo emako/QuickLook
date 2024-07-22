@@ -27,8 +27,8 @@ namespace QuickLook.Plugin.BinaryViewer;
 
 public class Plugin : IViewer
 {
-    private BinaryViewerPanel _bvp;
-    private string _path;
+    private BinaryViewerPanel _bvp = null!;
+    private string _path = null!;
 
     public int Priority => 0;
 
@@ -79,7 +79,7 @@ public class Plugin : IViewer
     {
         GC.SuppressFinalize(this);
 
-        _bvp = null;
+        _bvp = null!;
     }
 
     public async Task<string> LoadBinaryAsync(BinaryType type)
