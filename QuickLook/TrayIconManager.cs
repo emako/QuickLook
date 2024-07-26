@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using NotifyIcon = NotifyIconEx.NotifyIcon;
 
 namespace QuickLook;
 
@@ -33,16 +34,7 @@ internal class TrayIconManager : IDisposable
 
     private readonly NotifyIcon _icon;
 
-    private readonly MenuItem _itemAutorun =
-        new(TranslationHelper.Get("Icon_RunAtStartup"),
-            (sender, e) =>
-            {
-                if (AutoStartupHelper.IsAutorun())
-                    AutoStartupHelper.RemoveAutorunShortcut();
-                else
-                    AutoStartupHelper.CreateAutorunShortcut();
-            })
-        { Enabled = !App.IsUWP };
+    private readonly ToolStripMenuItem _itemAutorun = null!;
 
     private TrayIconManager()
     {
@@ -51,24 +43,30 @@ internal class TrayIconManager : IDisposable
             Text = string.Format(TranslationHelper.Get("Icon_ToolTip"),
                 Application.ProductVersion),
             Icon = GetTrayIconByDPI(),
-            ContextMenu = new ContextMenu(
-            [
-                new MenuItem($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (r2)") {Enabled = false},
-                new MenuItem("-"),
-                new MenuItem(TranslationHelper.Get("Icon_CheckUpdate"), (_, _) => Updater.CheckForUpdates()),
-                new MenuItem(TranslationHelper.Get("Icon_InstalledPlugin"), (_, _) => Process.Start($"file://{App.UserPluginPath}")),
-                new MenuItem(TranslationHelper.Get("Icon_GetPlugin"),
-                    (_, _) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins")),
-                _itemAutorun,
-                new MenuItem(TranslationHelper.Get("Icon_Restart"),
-                    (_, _) => Restart(forced: true)),
-                new MenuItem(TranslationHelper.Get("Icon_Quit"),
-                    (_, _) => System.Windows.Application.Current.Shutdown())
-            ]),
             Visible = SettingHelper.Get("ShowTrayIcon", true)
         };
 
-        _icon.ContextMenu.Popup += (sender, e) => { _itemAutorun.Checked = AutoStartupHelper.IsAutorun(); };
+        _icon.AddMenu($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (r2)").Enabled = false;
+        _icon.AddMenu("-");
+        _icon.AddMenu(TranslationHelper.Get("Icon_CheckUpdate"), (_, _) => Updater.CheckForUpdates());
+        _icon.AddMenu(TranslationHelper.Get("Icon_InstalledPlugin"), (_, _) => Process.Start($"file://{App.UserPluginPath}"));
+        _icon.AddMenu(TranslationHelper.Get("Icon_GetPlugin"),
+                (_, _) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins"));
+        _itemAutorun = _icon.AddMenu(TranslationHelper.Get("Icon_RunAtStartup"),
+            (sender, e) =>
+            {
+                if (AutoStartupHelper.IsAutorun())
+                    AutoStartupHelper.RemoveAutorunShortcut();
+                else
+                    AutoStartupHelper.CreateAutorunShortcut();
+            }) as ToolStripMenuItem;
+        _itemAutorun.Enabled = !App.IsUWP;
+        _icon.AddMenu(TranslationHelper.Get("Icon_Restart"),
+            (_, _) => Restart(forced: true));
+        _icon.AddMenu(TranslationHelper.Get("Icon_Quit"),
+            (_, _) => System.Windows.Application.Current.Shutdown());
+
+        _icon.ContextMenuStrip.Opened += (sender, e) => { _itemAutorun.Checked = AutoStartupHelper.IsAutorun(); };
     }
 
     public void Dispose()
