@@ -10,6 +10,7 @@
         <ProjectGuid>{AB1270AF-7EB4-4B4F-9E09-6404F1A28EA0}</ProjectGuid>
 	    <UseWPF>true</UseWPF>
 	    <LangVersion>12.0</LangVersion>
+		<Nullable>enable</Nullable>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 

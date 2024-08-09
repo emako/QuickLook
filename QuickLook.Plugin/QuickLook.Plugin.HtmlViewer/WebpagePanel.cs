@@ -32,7 +32,11 @@ public class WebpagePanel : UserControl
     private Uri _currentUri;
     private WebView2 _webView;
 
-    public WebpagePanel()
+    public WebpagePanel() : this(false)
+    {
+    }
+
+    public WebpagePanel(bool isForceDarkMode)
     {
         if (!Helper.IsWebView2Available())
         {
@@ -44,8 +48,9 @@ public class WebpagePanel : UserControl
             {
                 CreationProperties = new CoreWebView2CreationProperties
                 {
-                    UserDataFolder = Path.Combine(App.LocalDataPath, @"WebView2_Data\\")
-                }
+                    UserDataFolder = Path.Combine(SettingHelper.LocalDataPath, @"WebView2_Data\\"),
+                    AdditionalBrowserArguments = isForceDarkMode ? "--enable-features=WebContentsForceDark" : string.Empty
+                },
             };
             _webView.NavigationStarting += NavigationStarting_CancelNavigation;
             Content = _webView;

@@ -67,7 +67,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\QuickLook.Common\QuickLook.Common.csproj" />
-        <ProjectReference Include="..\..\QuickLook\QuickLook.csproj" />
     </ItemGroup>
 
 </Project>

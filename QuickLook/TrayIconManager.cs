@@ -53,7 +53,7 @@ internal class TrayIconManager : IDisposable
         _icon.AddMenu(TranslationHelper.Get("Icon_GetPlugin"),
                 (_, _) => Process.Start("https://github.com/QL-Win/QuickLook/wiki/Available-Plugins"));
         _itemAutorun = _icon.AddMenu(TranslationHelper.Get("Icon_RunAtStartup"),
-            (sender, e) =>
+            (_, _) =>
             {
                 if (AutoStartupHelper.IsAutorun())
                     AutoStartupHelper.RemoveAutorunShortcut();
@@ -66,7 +66,7 @@ internal class TrayIconManager : IDisposable
         _icon.AddMenu(TranslationHelper.Get("Icon_Quit"),
             (_, _) => System.Windows.Application.Current.Shutdown());
 
-        _icon.ContextMenuStrip.Opened += (sender, e) => { _itemAutorun.Checked = AutoStartupHelper.IsAutorun(); };
+        _icon.ContextMenuStrip.Opened += (_, _) => _itemAutorun.Checked = AutoStartupHelper.IsAutorun();
     }
 
     public void Dispose()
