@@ -25,6 +25,33 @@ I am aware that several alternatives are already available on the Internet (e.g.
  - Easily extended by [plugins](https://github.com/QL-Win/QuickLook/wiki/Available-Plugins)
  - Strict GPL license to keep it free forever
 
+## Modification
+
+Here is a modified version of QuickLook that continues to maintain and enhance some features.
+
+External [plugins](https://github.com/QL-Win/QuickLook/wiki/Available-Plugins) are compatible with the original version.
+
+### What's the difference from the original QuickLook?
+
+#### Functional differences
+
+1. New inner plugins
+   1. BinaryViewer
+   2. ExecutableViewer
+   3. FontViewer
+   4. HashViewer
+2. Upgrade inner plugins
+   1. Support dark mode with MarkdownViewer
+3. Upgrade main program
+   1. Support dark mode NotifyIcon Tray Menu
+
+#### Source code differences
+
+1. Use .NET SDK type project.
+2. Include Common project instead of using submodule.
+3. Upgrade the versions of dependencies.
+4. Fix some vulnerabilities.
+
 ## Usage
 
 ### Download/Installation
