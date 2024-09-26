@@ -46,7 +46,7 @@ internal class TrayIconManager : IDisposable
             Visible = SettingHelper.Get("ShowTrayIcon", true)
         };
 
-        _icon.AddMenu($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (r3)").Enabled = false;
+        _icon.AddMenu($"v{Application.ProductVersion.Split('+')[0]}{(App.IsUWP ? " UWP" : "")} (r4)").Enabled = false;
         _icon.AddMenu("-");
         _icon.AddMenu(TranslationHelper.Get("Icon_CheckUpdate"), (_, _) => Updater.CheckForUpdates());
         _icon.AddMenu(TranslationHelper.Get("Icon_InstalledPlugin"), (_, _) => Process.Start($"file://{App.UserPluginPath}"));
