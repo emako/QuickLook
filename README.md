@@ -35,12 +35,12 @@ External [plugins](https://github.com/QL-Win/QuickLook/wiki/Available-Plugins) a
 
 #### Functional differences
 
-1. New inner plugins
+1. New build-in plugins
    1. BinaryViewer
    2. ExecutableViewer
    3. FontViewer
    4. HashViewer
-2. Upgrade inner plugins
+2. Upgrade build-in plugins
    1. Support dark mode with MarkdownViewer
 3. Upgrade main program
    1. Support dark mode NotifyIcon Tray Menu
@@ -51,6 +51,22 @@ External [plugins](https://github.com/QL-Win/QuickLook/wiki/Available-Plugins) a
 2. Include Common project instead of using submodule.
 3. Upgrade the versions of dependencies.
 4. Fix some vulnerabilities.
+
+## External Plugins
+
+Some external plugins from me.
+
+[PlantUMLViewer](https://github.com/emako/QuickLook.Plugin.PlantUMLViewer)
+
+[TorrentViewer](https://github.com/emako/QuickLook.Plugin.TorrentViewer)
+
+[XMindThumbnailViewer](https://github.com/emako/QuickLook.Plugin.XMindThumbnailViewer)
+
+[DrawIOViewer](https://github.com/emako/QuickLook.Plugin.DrawIOViewer)
+
+[MarkmapViewer](https://github.com/emako/QuickLook.Plugin.MarkmapViewer)
+
+[FigmaThumbnailViewer](https://github.com/emako/QuickLook.Plugin.FigmaThumbnailViewer)
 
 ## Usage
 
