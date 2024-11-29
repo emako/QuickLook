@@ -44,6 +44,7 @@ External [plugins](https://github.com/QL-Win/QuickLook/wiki/Available-Plugins) a
    1. Support dark mode with MarkdownViewer
 3. Upgrade main program
    1. Support dark mode NotifyIcon Tray Menu
+   2. Update icon to fluent type.
 
 #### Source code differences
 
